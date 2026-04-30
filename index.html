@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>FocusFlow — ADHD Manager</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6c63ff">
+  <meta name="description" content="A calm, focused task manager designed for ADHD brains.">
+
+  <!-- iOS PWA support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FocusFlow">
+  <link rel="apple-touch-icon" href="icons/icon-152.svg">
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.svg">
+  <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.svg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="greeting" id="greeting"></div>
+      <div class="top-actions">
+        <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+          <svg class="icon sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><g stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></g></svg>
+          <svg class="icon moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigation tabs -->
+    <nav class="tab-bar">
+      <button class="tab active" data-tab="dump">Brain Dump</button>
+      <button class="tab" data-tab="today">Today's Focus</button>
+      <button class="tab" data-tab="timer">Focus Timer</button>
+      <button class="tab" data-tab="wins">Wins</button>
+    </nav>
+
+    <!-- ===== BRAIN DUMP ===== -->
+    <section class="panel active" id="panel-dump">
+      <div class="panel-header">
+        <h2>Brain Dump</h2>
+        <p class="subtitle">Get it out of your head. No organizing, no pressure.</p>
+      </div>
+      <div class="dump-input-wrap">
+        <input type="text" id="dump-input" placeholder="Type anything and press Enter..." autocomplete="off" />
+        <button class="btn-primary" id="dump-add">Add</button>
+      </div>
+      <ul class="dump-list" id="dump-list"></ul>
+      <div class="dump-empty" id="dump-empty">
+        <div class="empty-icon">🧠</div>
+        <p>Your brain is clear! Add thoughts above.</p>
+      </div>
+    </section>
+
+    <!-- ===== TODAY'S FOCUS ===== -->
+    <section class="panel" id="panel-today">
+      <div class="panel-header">
+        <h2>Today's Focus</h2>
+        <p class="subtitle">Pick up to 3 tasks. That's it. You got this.</p>
+      </div>
+      <div class="focus-slots" id="focus-slots">
+        <div class="focus-slot" data-slot="0">
+          <div class="slot-number">1</div>
+          <div class="slot-content empty" data-slot="0">
+            <span class="slot-placeholder">Drag a task here or click to pick</span>
+          </div>
+        </div>
+        <div class="focus-slot" data-slot="1">
+          <div class="slot-number">2</div>
+          <div class="slot-content empty" data-slot="1">
+            <span class="slot-placeholder">Drag a task here or click to pick</span>
+          </div>
+        </div>
+        <div class="focus-slot" data-slot="2">
+          <div class="slot-number">3</div>
+          <div class="slot-content empty" data-slot="2">
+            <span class="slot-placeholder">Drag a task here or click to pick</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subtasks-area" id="subtasks-area" style="display:none">
+        <h3 id="subtask-parent-title"></h3>
+        <p class="subtitle">Break it down into tiny steps:</p>
+        <div class="dump-input-wrap">
+          <input type="text" id="subtask-input" placeholder="Add a small step..." autocomplete="off" />
+          <button class="btn-primary" id="subtask-add">Add</button>
+        </div>
+        <ul class="subtask-list" id="subtask-list"></ul>
+      </div>
+
+      <!-- Picker modal -->
+      <div class="modal-overlay" id="picker-overlay" style="display:none">
+        <div class="modal">
+          <div class="modal-header">
+            <h3>Pick a task from Brain Dump</h3>
+            <button class="icon-btn modal-close" id="picker-close">&times;</button>
+          </div>
+          <ul class="picker-list" id="picker-list"></ul>
+          <p class="picker-empty" id="picker-empty" style="display:none">No tasks in Brain Dump. Add some first!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FOCUS TIMER ===== -->
+    <section class="panel" id="panel-timer">
+      <div class="panel-header">
+        <h2>Focus Timer</h2>
+        <p class="subtitle">Work in short bursts. Your brain will thank you.</p>
+      </div>
+      <div class="timer-presets">
+        <button class="preset active" data-minutes="25">25 min</button>
+        <button class="preset" data-minutes="15">15 min</button>
+        <button class="preset" data-minutes="10">10 min</button>
+        <button class="preset" data-minutes="5">5 min</button>
+      </div>
+      <div class="timer-ring-wrap">
+        <svg class="timer-ring" viewBox="0 0 200 200">
+          <circle class="ring-bg" cx="100" cy="100" r="90" />
+          <circle class="ring-progress" cx="100" cy="100" r="90" id="ring-progress" />
+        </svg>
+        <div class="timer-display" id="timer-display">25:00</div>
+      </div>
+      <div class="timer-controls">
+        <button class="btn-primary btn-large" id="timer-start">Start Focus</button>
+        <button class="btn-secondary btn-large" id="timer-reset" style="display:none">Reset</button>
+      </div>
+
+      <!-- Distraction catcher -->
+      <div class="distraction-area" id="distraction-area" style="display:none">
+        <h3>Distraction Catcher</h3>
+        <p class="subtitle">Thought popped up? Park it here and stay focused.</p>
+        <div class="dump-input-wrap">
+          <input type="text" id="distraction-input" placeholder="Park the distraction..." autocomplete="off" />
+          <button class="btn-secondary" id="distraction-add">Park It</button>
+        </div>
+        <ul class="distraction-list" id="distraction-list"></ul>
+      </div>
+    </section>
+
+    <!-- ===== WINS ===== -->
+    <section class="panel" id="panel-wins">
+      <div class="panel-header">
+        <h2>Today's Wins</h2>
+        <p class="subtitle">Look at what you accomplished. Every step counts.</p>
+      </div>
+      <div class="wins-stats" id="wins-stats">
+        <div class="stat-card">
+          <div class="stat-number" id="stat-tasks">0</div>
+          <div class="stat-label">Tasks Done</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-focus">0</div>
+          <div class="stat-label">Focus Sessions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-streak">0</div>
+          <div class="stat-label">Day Streak</div>
+        </div>
+      </div>
+      <ul class="wins-list" id="wins-list"></ul>
+      <div class="dump-empty" id="wins-empty">
+        <div class="empty-icon">🏆</div>
+        <p>Complete tasks or focus sessions to see your wins!</p>
+      </div>
+      <button class="btn-secondary" id="clear-day" style="margin-top:1rem">Start Fresh Day</button>
+    </section>
+
+    <!-- Confetti canvas -->
+    <canvas id="confetti-canvas"></canvas>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js');
+      });
+    }
+  </script>
+</body>
+</html>

@@ -102,31 +102,13 @@ function initCalmScreen() {
 initCalmScreen();
 
 // ===== MOOD CHECK-IN =====
+const crisisMoods = ['overwhelmed', 'anxious'];
+
 const moodResponses = {
-  overwhelmed: {
-    text: "That's okay. Being overwhelmed doesn't mean you're failing — it means you care about a lot of things. Let's take it one tiny piece at a time. You don't have to do everything today.",
-    showGround: true,
-  },
-  anxious: {
-    text: "Your feelings are valid. Anxiety often comes from trying to hold too many things at once. Let's put them down somewhere safe and just focus on one small next step.",
-    showGround: true,
-  },
-  scattered: {
-    text: "Scattered brain? That's just an ADHD Tuesday. Let's wrangle those thoughts into your brain dump — no organizing needed, just get them out of your head.",
-    showGround: false,
-  },
-  low: {
-    text: "Low energy days are real and they matter. Today's win might be just one small thing — and that's enough. Be gentle with yourself.",
-    showGround: false,
-  },
-  okay: {
-    text: "Okay is great! You're here, you're showing up. Let's make today work for you, one step at a time.",
-    showGround: false,
-  },
-  good: {
-    text: "Love that energy! Let's ride this wave. You've got this — pick your focus and let's make it a great day.",
-    showGround: false,
-  },
+  scattered: "That's just an ADHD brain doing its thing. Let's dump those thoughts — no organizing needed.",
+  low: "Low energy is real. One tiny thing today is enough. Be gentle with yourself.",
+  okay: "You're here, you showed up. Let's make today work for you.",
+  good: "Love that energy! Let's ride this wave.",
 };
 
 function showMoodCheckin() {
@@ -139,17 +121,22 @@ function showMoodCheckin() {
 
   btns.forEach(btn => {
     btn.addEventListener('click', () => {
-      btns.forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-
       const mood = btn.dataset.mood;
-      const data = moodResponses[mood];
 
       state.moodLog.push({ mood, timestamp: Date.now(), date: new Date().toDateString() });
       saveState();
 
-      responseText.textContent = data.text;
-      groundBtn.style.display = data.showGround ? 'inline-flex' : 'none';
+      if (crisisMoods.includes(mood)) {
+        moodCheckin.style.display = 'none';
+        openInstantCalm(mood);
+        return;
+      }
+
+      btns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+
+      responseText.textContent = moodResponses[mood];
+      groundBtn.style.display = 'none';
       response.style.display = 'block';
       document.getElementById('mood-options').style.display = 'none';
     });
@@ -164,6 +151,67 @@ function showMoodCheckin() {
     moodCheckin.style.display = 'none';
     openGroundingExercise();
   });
+}
+
+// ===== INSTANT CALM (for overwhelmed/anxious — zero decisions) =====
+const instantCalm = document.getElementById('instant-calm');
+const instantCalmGuide = document.getElementById('instant-calm-guide');
+const instantCalmCounter = document.getElementById('instant-calm-counter');
+const instantCalmWhisper = document.getElementById('instant-calm-whisper');
+let instantCalmInterval = null;
+let instantCalmBreathCount = 0;
+
+const calmWhispers = {
+  overwhelmed: [
+    "It's okay. You're safe.",
+    "You don't have to solve anything right now.",
+    "Just breathe with me.",
+  ],
+  anxious: [
+    "You're here. That's enough.",
+    "Let's slow everything down.",
+    "Nothing else matters for the next few breaths.",
+  ],
+};
+
+function openInstantCalm(mood) {
+  instantCalm.style.display = 'flex';
+  instantCalm.classList.remove('fade-out');
+  instantCalmBreathCount = 0;
+
+  const whispers = calmWhispers[mood] || calmWhispers.overwhelmed;
+  instantCalmWhisper.textContent = whispers[0];
+  let whisperIdx = 0;
+
+  const breathPhases = ['Breathe in...', 'Hold gently...', 'Breathe out slowly...', 'Rest...'];
+  let phaseIdx = 0;
+  instantCalmGuide.textContent = breathPhases[0];
+
+  instantCalmInterval = setInterval(() => {
+    phaseIdx = (phaseIdx + 1) % breathPhases.length;
+    instantCalmGuide.textContent = breathPhases[phaseIdx];
+
+    if (phaseIdx === 0) {
+      instantCalmBreathCount++;
+      instantCalmCounter.textContent = instantCalmBreathCount === 1
+        ? '1 breath'
+        : `${instantCalmBreathCount} breaths`;
+
+      if (instantCalmBreathCount <= whispers.length - 1) {
+        whisperIdx++;
+        instantCalmWhisper.textContent = whispers[whisperIdx];
+      }
+    }
+  }, 2000);
+
+  document.getElementById('instant-calm-exit').addEventListener('click', closeInstantCalm, { once: true });
+}
+
+function closeInstantCalm() {
+  if (instantCalmInterval) clearInterval(instantCalmInterval);
+  instantCalmInterval = null;
+  instantCalm.classList.add('fade-out');
+  setTimeout(() => { instantCalm.style.display = 'none'; }, 800);
 }
 
 // ===== GROUNDING EXERCISE (5-4-3-2-1) =====
@@ -252,8 +300,8 @@ document.querySelectorAll('.grounding-input').forEach(input => {
 
 document.getElementById('grounding-done').addEventListener('click', closeGroundingExercise);
 
-// SOS calm button
-document.getElementById('sos-calm').addEventListener('click', openGroundingExercise);
+// SOS calm button — instant breathing, not a task-based exercise
+document.getElementById('sos-calm').addEventListener('click', () => openInstantCalm('overwhelmed'));
 
 // ===== GREETING =====
 function updateGreeting() {

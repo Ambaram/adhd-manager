@@ -448,6 +448,118 @@
   50% { border-color: rgba(255,107,107,0.3); transform: scale(1.08); }
 }
 
+/* ===== INSTANT CALM (overwhelmed/anxious) ===== */
+.instant-calm {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  animation: instantCalmIn 1s ease;
+}
+
+@keyframes instantCalmIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.instant-calm.fade-out {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+
+.instant-calm-content {
+  text-align: center;
+  padding: 2rem;
+  max-width: 400px;
+  width: 100%;
+}
+
+.instant-calm-whisper {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 3rem;
+  animation: whisperIn 1.5s ease;
+  letter-spacing: 0.3px;
+  line-height: 1.6;
+}
+
+@keyframes whisperIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  40% { opacity: 0; }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.instant-calm-breath {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instant-calm-orb {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124,116,255,0.9) 0%, rgba(124,116,255,0.2) 70%);
+  box-shadow: 0 0 80px rgba(124,116,255,0.3), 0 0 160px rgba(124,116,255,0.1);
+  animation: calmBreathe 8s ease-in-out infinite;
+}
+
+@keyframes calmBreathe {
+  0%, 100% { transform: scale(0.5); opacity: 0.6; box-shadow: 0 0 40px rgba(124,116,255,0.2); }
+  25% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 100px rgba(124,116,255,0.4); }
+  50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 100px rgba(124,116,255,0.4); }
+  75% { transform: scale(0.5); opacity: 0.6; box-shadow: 0 0 40px rgba(124,116,255,0.2); }
+}
+
+.instant-calm-guide {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1rem;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: opacity 0.6s ease;
+  letter-spacing: 0.5px;
+}
+
+.instant-calm-counter {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 2.5rem;
+  min-height: 1.2em;
+}
+
+.instant-calm-exit {
+  padding: 0.8rem 2rem;
+  background: transparent;
+  color: rgba(255,255,255,0.45);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  font-family: var(--font);
+  opacity: 0;
+  animation: calmBtnIn 0.6s ease 6s forwards;
+}
+
+.instant-calm-exit:hover {
+  color: rgba(255,255,255,0.8);
+  border-color: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.05);
+}
+
 /* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 

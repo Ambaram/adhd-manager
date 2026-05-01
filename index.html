@@ -24,11 +24,141 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- ===== CALM LANDING SCREEN ===== -->
+  <div class="calm-landing" id="calm-landing">
+    <div class="calm-content">
+      <div class="calm-breath-ring" id="calm-breath-ring">
+        <div class="calm-breath-circle"></div>
+        <span class="calm-breath-label" id="calm-breath-label">Breathe in...</span>
+      </div>
+      <h1 class="calm-title" id="calm-title">Take a moment.</h1>
+      <p class="calm-subtitle" id="calm-subtitle">You're safe here. Nothing needs to happen right now.</p>
+      <button class="calm-skip" id="calm-skip">I'm ready</button>
+    </div>
+  </div>
+
+  <!-- ===== MOOD CHECK-IN ===== -->
+  <div class="mood-checkin" id="mood-checkin" style="display:none">
+    <div class="mood-content">
+      <h2 class="mood-title">How are you feeling right now?</h2>
+      <p class="mood-subtitle">No wrong answers. Just checking in.</p>
+      <div class="mood-options" id="mood-options">
+        <button class="mood-btn" data-mood="overwhelmed">
+          <span class="mood-emoji">😰</span>
+          <span class="mood-label">Overwhelmed</span>
+        </button>
+        <button class="mood-btn" data-mood="anxious">
+          <span class="mood-emoji">😟</span>
+          <span class="mood-label">Anxious</span>
+        </button>
+        <button class="mood-btn" data-mood="scattered">
+          <span class="mood-emoji">🌀</span>
+          <span class="mood-label">Scattered</span>
+        </button>
+        <button class="mood-btn" data-mood="low">
+          <span class="mood-emoji">😔</span>
+          <span class="mood-label">Low energy</span>
+        </button>
+        <button class="mood-btn" data-mood="okay">
+          <span class="mood-emoji">😊</span>
+          <span class="mood-label">Okay</span>
+        </button>
+        <button class="mood-btn" data-mood="good">
+          <span class="mood-emoji">😄</span>
+          <span class="mood-label">Good!</span>
+        </button>
+      </div>
+      <div class="mood-response" id="mood-response" style="display:none">
+        <p class="mood-response-text" id="mood-response-text"></p>
+        <button class="btn-primary" id="mood-continue">Let's go</button>
+        <button class="btn-secondary" id="mood-ground" style="display:none">Try a grounding exercise</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GROUNDING EXERCISE OVERLAY ===== -->
+  <div class="grounding-overlay" id="grounding-overlay" style="display:none">
+    <div class="grounding-content">
+      <button class="grounding-close" id="grounding-close">&times;</button>
+      <h2 class="grounding-title">Let's ground yourself</h2>
+      <p class="grounding-desc">Use your senses to come back to the present moment.</p>
+      <div class="grounding-steps" id="grounding-steps">
+        <div class="grounding-step active" data-step="5">
+          <div class="grounding-step-number">5</div>
+          <div class="grounding-step-sense">things you can <strong>see</strong></div>
+          <div class="grounding-step-hint">Look around slowly. Name them in your mind.</div>
+          <div class="grounding-step-items" id="ground-items-5"></div>
+          <div class="grounding-input-wrap">
+            <input type="text" class="grounding-input" id="ground-input-5" placeholder="I can see..." autocomplete="off" />
+            <button class="btn-primary grounding-add" data-step="5">Add</button>
+          </div>
+          <div class="grounding-counter"><span id="ground-count-5">0</span> / 5</div>
+        </div>
+        <div class="grounding-step" data-step="4">
+          <div class="grounding-step-number">4</div>
+          <div class="grounding-step-sense">things you can <strong>touch</strong></div>
+          <div class="grounding-step-hint">Feel textures around you. The chair, your clothes, a surface.</div>
+          <div class="grounding-step-items" id="ground-items-4"></div>
+          <div class="grounding-input-wrap">
+            <input type="text" class="grounding-input" id="ground-input-4" placeholder="I can touch..." autocomplete="off" />
+            <button class="btn-primary grounding-add" data-step="4">Add</button>
+          </div>
+          <div class="grounding-counter"><span id="ground-count-4">0</span> / 4</div>
+        </div>
+        <div class="grounding-step" data-step="3">
+          <div class="grounding-step-number">3</div>
+          <div class="grounding-step-sense">things you can <strong>hear</strong></div>
+          <div class="grounding-step-hint">Close your eyes for a second. What sounds surround you?</div>
+          <div class="grounding-step-items" id="ground-items-3"></div>
+          <div class="grounding-input-wrap">
+            <input type="text" class="grounding-input" id="ground-input-3" placeholder="I can hear..." autocomplete="off" />
+            <button class="btn-primary grounding-add" data-step="3">Add</button>
+          </div>
+          <div class="grounding-counter"><span id="ground-count-3">0</span> / 3</div>
+        </div>
+        <div class="grounding-step" data-step="2">
+          <div class="grounding-step-number">2</div>
+          <div class="grounding-step-sense">things you can <strong>smell</strong></div>
+          <div class="grounding-step-hint">Take a deep breath through your nose. Notice any scents.</div>
+          <div class="grounding-step-items" id="ground-items-2"></div>
+          <div class="grounding-input-wrap">
+            <input type="text" class="grounding-input" id="ground-input-2" placeholder="I can smell..." autocomplete="off" />
+            <button class="btn-primary grounding-add" data-step="2">Add</button>
+          </div>
+          <div class="grounding-counter"><span id="ground-count-2">0</span> / 2</div>
+        </div>
+        <div class="grounding-step" data-step="1">
+          <div class="grounding-step-number">1</div>
+          <div class="grounding-step-sense">thing you can <strong>taste</strong></div>
+          <div class="grounding-step-hint">Notice the taste in your mouth, or take a sip of water.</div>
+          <div class="grounding-step-items" id="ground-items-1"></div>
+          <div class="grounding-input-wrap">
+            <input type="text" class="grounding-input" id="ground-input-1" placeholder="I can taste..." autocomplete="off" />
+            <button class="btn-primary grounding-add" data-step="1">Add</button>
+          </div>
+          <div class="grounding-counter"><span id="ground-count-1">0</span> / 1</div>
+        </div>
+      </div>
+      <div class="grounding-progress">
+        <div class="grounding-progress-bar" id="grounding-progress-bar"></div>
+      </div>
+      <div class="grounding-complete" id="grounding-complete" style="display:none">
+        <div class="grounding-complete-icon">🌿</div>
+        <h3>You're here. You're present.</h3>
+        <p>Take one more deep breath. You did great.</p>
+        <button class="btn-primary" id="grounding-done">I feel better</button>
+      </div>
+    </div>
+  </div>
+
   <div id="app">
     <!-- Top bar -->
     <header class="top-bar">
       <div class="greeting" id="greeting"></div>
       <div class="top-actions">
+        <button class="icon-btn calm-btn" id="sos-calm" aria-label="Feeling overwhelmed?" title="Feeling overwhelmed? Take a breath.">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
         <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
           <svg class="icon sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><g stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></g></svg>
           <svg class="icon moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>

@@ -11,6 +11,8 @@ const defaultState = () => ({
   streak: 0,
   lastActiveDate: null,
   theme: 'light',
+  lastCalm: null,
+  moodLog: [],
 });
 
 let state = loadState();
@@ -46,6 +48,212 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
 });
 
 applyTheme();
+
+// ===== CALM LANDING SCREEN =====
+const calmLanding = document.getElementById('calm-landing');
+const calmBreathLabel = document.getElementById('calm-breath-label');
+const calmSkip = document.getElementById('calm-skip');
+const moodCheckin = document.getElementById('mood-checkin');
+
+const calmMessages = [
+  { title: "Take a moment.", sub: "You're safe here. Nothing needs to happen right now." },
+  { title: "Pause. Breathe.", sub: "This moment is yours. No rush, no pressure." },
+  { title: "Hey, you showed up.", sub: "That already counts. Let's take it slow." },
+  { title: "Welcome back.", sub: "Before we begin, let's just breathe together." },
+  { title: "One breath at a time.", sub: "You don't have to figure it all out right now." },
+];
+
+function shouldShowCalm() {
+  const lastCalm = state.lastCalm;
+  if (!lastCalm) return true;
+  const hours = (Date.now() - lastCalm) / (1000 * 60 * 60);
+  return hours >= 4;
+}
+
+function initCalmScreen() {
+  if (!shouldShowCalm()) {
+    calmLanding.style.display = 'none';
+    return;
+  }
+
+  const msg = calmMessages[Math.floor(Math.random() * calmMessages.length)];
+  document.getElementById('calm-title').textContent = msg.title;
+  document.getElementById('calm-subtitle').textContent = msg.sub;
+
+  const breathPhrases = ['Breathe in...', 'Hold...', 'Breathe out...', 'Hold...'];
+  let breathIdx = 0;
+  const breathInterval = setInterval(() => {
+    breathIdx = (breathIdx + 1) % breathPhrases.length;
+    calmBreathLabel.textContent = breathPhrases[breathIdx];
+  }, 2000);
+
+  calmSkip.addEventListener('click', () => {
+    clearInterval(breathInterval);
+    calmLanding.classList.add('fade-out');
+    state.lastCalm = Date.now();
+    saveState();
+    setTimeout(() => {
+      calmLanding.style.display = 'none';
+      showMoodCheckin();
+    }, 600);
+  });
+}
+
+initCalmScreen();
+
+// ===== MOOD CHECK-IN =====
+const moodResponses = {
+  overwhelmed: {
+    text: "That's okay. Being overwhelmed doesn't mean you're failing — it means you care about a lot of things. Let's take it one tiny piece at a time. You don't have to do everything today.",
+    showGround: true,
+  },
+  anxious: {
+    text: "Your feelings are valid. Anxiety often comes from trying to hold too many things at once. Let's put them down somewhere safe and just focus on one small next step.",
+    showGround: true,
+  },
+  scattered: {
+    text: "Scattered brain? That's just an ADHD Tuesday. Let's wrangle those thoughts into your brain dump — no organizing needed, just get them out of your head.",
+    showGround: false,
+  },
+  low: {
+    text: "Low energy days are real and they matter. Today's win might be just one small thing — and that's enough. Be gentle with yourself.",
+    showGround: false,
+  },
+  okay: {
+    text: "Okay is great! You're here, you're showing up. Let's make today work for you, one step at a time.",
+    showGround: false,
+  },
+  good: {
+    text: "Love that energy! Let's ride this wave. You've got this — pick your focus and let's make it a great day.",
+    showGround: false,
+  },
+};
+
+function showMoodCheckin() {
+  moodCheckin.style.display = 'flex';
+  const btns = document.querySelectorAll('.mood-btn');
+  const response = document.getElementById('mood-response');
+  const responseText = document.getElementById('mood-response-text');
+  const continueBtn = document.getElementById('mood-continue');
+  const groundBtn = document.getElementById('mood-ground');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+
+      const mood = btn.dataset.mood;
+      const data = moodResponses[mood];
+
+      state.moodLog.push({ mood, timestamp: Date.now(), date: new Date().toDateString() });
+      saveState();
+
+      responseText.textContent = data.text;
+      groundBtn.style.display = data.showGround ? 'inline-flex' : 'none';
+      response.style.display = 'block';
+      document.getElementById('mood-options').style.display = 'none';
+    });
+  });
+
+  continueBtn.addEventListener('click', () => {
+    moodCheckin.classList.add('fade-out');
+    setTimeout(() => { moodCheckin.style.display = 'none'; }, 500);
+  });
+
+  groundBtn.addEventListener('click', () => {
+    moodCheckin.style.display = 'none';
+    openGroundingExercise();
+  });
+}
+
+// ===== GROUNDING EXERCISE (5-4-3-2-1) =====
+const groundingOverlay = document.getElementById('grounding-overlay');
+const groundingSteps = document.querySelectorAll('.grounding-step');
+const groundingProgressBar = document.getElementById('grounding-progress-bar');
+const groundingComplete = document.getElementById('grounding-complete');
+
+let groundCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+let currentGroundStep = 5;
+const groundTargets = { 5: 5, 4: 4, 3: 3, 2: 2, 1: 1 };
+
+function openGroundingExercise() {
+  groundingOverlay.style.display = 'block';
+  groundCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  currentGroundStep = 5;
+  groundingComplete.style.display = 'none';
+  document.getElementById('grounding-steps').style.display = 'block';
+  groundingProgressBar.style.width = '0%';
+
+  groundingSteps.forEach(s => {
+    s.classList.remove('active');
+    const step = s.dataset.step;
+    document.getElementById(`ground-items-${step}`).innerHTML = '';
+    document.getElementById(`ground-count-${step}`).textContent = '0';
+    document.getElementById(`ground-input-${step}`).value = '';
+  });
+  document.querySelector('.grounding-step[data-step="5"]').classList.add('active');
+}
+
+function closeGroundingExercise() {
+  groundingOverlay.style.display = 'none';
+}
+
+function addGroundItem(step) {
+  const input = document.getElementById(`ground-input-${step}`);
+  const val = input.value.trim();
+  if (!val) return;
+
+  groundCounts[step]++;
+  const container = document.getElementById(`ground-items-${step}`);
+  const tag = document.createElement('span');
+  tag.className = 'ground-tag';
+  tag.textContent = val;
+  container.appendChild(tag);
+
+  input.value = '';
+  document.getElementById(`ground-count-${step}`).textContent = groundCounts[step];
+
+  const totalDone = Object.values(groundCounts).reduce((a, b) => a + b, 0);
+  const totalNeeded = 5 + 4 + 3 + 2 + 1;
+  groundingProgressBar.style.width = `${(totalDone / totalNeeded) * 100}%`;
+
+  if (groundCounts[step] >= groundTargets[step]) {
+    const nextStep = step - 1;
+    if (nextStep >= 1) {
+      currentGroundStep = nextStep;
+      setTimeout(() => {
+        groundingSteps.forEach(s => s.classList.remove('active'));
+        document.querySelector(`.grounding-step[data-step="${nextStep}"]`).classList.add('active');
+        document.getElementById(`ground-input-${nextStep}`).focus();
+      }, 400);
+    } else {
+      setTimeout(() => {
+        document.getElementById('grounding-steps').style.display = 'none';
+        groundingComplete.style.display = 'block';
+      }, 400);
+    }
+  }
+}
+
+document.getElementById('grounding-close').addEventListener('click', closeGroundingExercise);
+
+document.querySelectorAll('.grounding-add').forEach(btn => {
+  btn.addEventListener('click', () => addGroundItem(parseInt(btn.dataset.step)));
+});
+
+document.querySelectorAll('.grounding-input').forEach(input => {
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const step = parseInt(input.id.split('-').pop());
+      addGroundItem(step);
+    }
+  });
+});
+
+document.getElementById('grounding-done').addEventListener('click', closeGroundingExercise);
+
+// SOS calm button
+document.getElementById('sos-calm').addEventListener('click', openGroundingExercise);
 
 // ===== GREETING =====
 function updateGreeting() {

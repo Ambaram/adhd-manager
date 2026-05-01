@@ -1169,6 +1169,35 @@ const reelVideoSources = [
   `${REEL_VIDEO_BASE}ForBiggerMeltdowns.mp4`,
 ];
 
+function makeYouTubeEmbedUrl(id, start = 0, end = 15) {
+  const q = new URLSearchParams({
+    autoplay: '1',
+    mute: '1',
+    controls: '0',
+    loop: '1',
+    playlist: id,
+    start: String(start),
+    end: String(end),
+    rel: '0',
+    modestbranding: '1',
+    playsinline: '1',
+  });
+  return `https://www.youtube.com/embed/${id}?${q.toString()}`;
+}
+
+const adhdYouTubeClips = [
+  makeYouTubeEmbedUrl('BEwJ9r0FAg4'),
+  makeYouTubeEmbedUrl('LZwSf6ZZRlI'),
+  makeYouTubeEmbedUrl('nEmOpzfivv4'),
+  makeYouTubeEmbedUrl('unAW3raLvJY'),
+  makeYouTubeEmbedUrl('u77I0AZRvZA'),
+  makeYouTubeEmbedUrl('ADf_J_rPkuc'),
+  makeYouTubeEmbedUrl('I2Y2OedGMj0'),
+  makeYouTubeEmbedUrl('_SilFHwyBpU'),
+  makeYouTubeEmbedUrl('y41npkFKrdg'),
+  makeYouTubeEmbedUrl('Mx6YlI19bL0'),
+];
+
 const reelsData = [
   {
     emoji: '🧠',
@@ -1177,7 +1206,7 @@ const reelsData = [
     body: 'ADHD is a difference in how your brain manages dopamine and norepinephrine. You\'re not lazy or stupid — your brain is wired to seek stimulation. Understanding this is the first step to working WITH your brain, not against it.',
     action: 'Swipe for the next clip',
     theme: 1,
-    videoSrc: reelVideoSources[0],
+    youtubeEmbed: adhdYouTubeClips[0],
   },
   {
     emoji: '⏱️',
@@ -1186,7 +1215,7 @@ const reelsData = [
     body: 'ADHD brains struggle with time perception. Try this: set timers for everything, not as pressure but as anchors. External time cues replace the internal clock your brain skips over. Body doubling and visual timers help too.',
     action: 'Try the Focus Timer →',
     theme: 4,
-    videoSrc: reelVideoSources[1],
+    youtubeEmbed: adhdYouTubeClips[1],
   },
   {
     emoji: '🌊',
@@ -1195,7 +1224,7 @@ const reelsData = [
     body: 'ADHD emotions hit harder and faster. But here\'s the secret: emotions are waves, not tsunamis. They peak in about 90 seconds. If you can ride that wave — breathe, feel it, don\'t react — it WILL pass. Every time.',
     action: 'You\'re building this skill',
     theme: 2,
-    videoSrc: reelVideoSources[2],
+    youtubeEmbed: adhdYouTubeClips[2],
   },
   {
     emoji: '🗑️',
@@ -1204,7 +1233,7 @@ const reelsData = [
     body: 'Your working memory holds ~3 things. Non-ADHD brains: maybe 7. That\'s why you feel overwhelmed — too many tabs open. The fix? Externalize everything. Write it down. Brain dump it. Your phone, a notebook, this app — they\'re your external hard drive.',
     action: 'Try Brain Dump →',
     theme: 6,
-    videoSrc: reelVideoSources[3],
+    youtubeEmbed: adhdYouTubeClips[3],
   },
   {
     emoji: '🏔️',
@@ -1213,7 +1242,7 @@ const reelsData = [
     body: 'When a task feels impossible, your brain freezes. It\'s not laziness — it\'s your prefrontal cortex overwhelmed by the gap between "here" and "done." The hack: shrink the task until it\'s laughably small. "Open the document." That\'s it. Momentum does the rest.',
     action: 'Break tasks down →',
     theme: 5,
-    videoSrc: reelVideoSources[4],
+    youtubeEmbed: adhdYouTubeClips[4],
   },
   {
     emoji: '💤',
@@ -1222,7 +1251,7 @@ const reelsData = [
     body: 'ADHD brains burn more glucose trying to focus. You\'re not imagining the exhaustion — your brain is literally working harder than neurotypical brains to do the same things. Rest isn\'t quitting. It\'s refueling. Schedule it like a meeting.',
     action: 'Be kind to yourself',
     theme: 9,
-    videoSrc: reelVideoSources[5],
+    youtubeEmbed: adhdYouTubeClips[5],
   },
   {
     emoji: '🎯',
@@ -1231,7 +1260,7 @@ const reelsData = [
     body: 'Hyperfocus isn\'t a myth — it\'s your brain finding the perfect dopamine match. The catch: you can\'t always choose what triggers it. The strategy: pair boring tasks with novelty (new playlist, new location, body doubling). Make your brain WANT to engage.',
     action: 'Channel it wisely',
     theme: 3,
-    videoSrc: reelVideoSources[6],
+    youtubeEmbed: adhdYouTubeClips[6],
   },
   {
     emoji: '🔄',
@@ -1240,7 +1269,7 @@ const reelsData = [
     body: 'Willpower is a depletable resource, and ADHD brains start with less. Stop relying on motivation — it\'s weather, not climate. Instead: reduce friction (put things where you\'ll trip over them), stack habits (after coffee → brain dump), and forgive the misses.',
     action: 'Systems > willpower',
     theme: 7,
-    videoSrc: reelVideoSources[7],
+    youtubeEmbed: adhdYouTubeClips[7],
   },
   {
     emoji: '🤝',
@@ -1249,7 +1278,7 @@ const reelsData = [
     body: 'You\'re comparing your chapter 3 to someone else\'s chapter 20. ADHD means you took a different path — not a wrong one. Every strategy you\'ve developed, every workaround you\'ve built? That\'s resilience most people never need to develop.',
     action: 'You\'re doing great',
     theme: 10,
-    videoSrc: reelVideoSources[8],
+    youtubeEmbed: adhdYouTubeClips[8],
   },
   {
     emoji: '🌱',
@@ -1258,7 +1287,7 @@ const reelsData = [
     body: 'Every time you pause before reacting, breathe through anxiety, or name your emotion — you\'re strengthening neural pathways. After ~20 repetitions, your brain starts automating the response. You\'re not managing ADHD. You\'re training your brain. And it\'s working.',
     action: 'Keep growing',
     theme: 8,
-    videoSrc: reelVideoSources[9],
+    youtubeEmbed: adhdYouTubeClips[9],
   },
 ];
 
@@ -1412,8 +1441,11 @@ function initReelDeck(cfg) {
   }
 
   function slideHtml(item, i, showHint) {
-    const hasVideo = !!item.videoSrc;
-    const videoBlock = hasVideo
+    const hasYouTube = !!item.youtubeEmbed;
+    const hasVideo = !!item.videoSrc || hasYouTube;
+    const videoBlock = hasYouTube
+      ? `<div class="reel-media"><iframe class="reel-youtube" src="${item.youtubeEmbed}" title="${escHtml(item.title)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe><div class="reel-scrim" aria-hidden="true"></div></div>`
+      : hasVideo
       ? `<div class="reel-media"><video class="reel-video" src="${item.videoSrc}" playsinline muted loop preload="metadata"></video><div class="reel-scrim" aria-hidden="true"></div></div>`
       : '';
     const extraClass = hasVideo ? ' reel-has-video' : '';

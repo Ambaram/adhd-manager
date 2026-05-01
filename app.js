@@ -1414,7 +1414,7 @@ function initReelDeck(cfg) {
   function slideHtml(item, i, showHint) {
     const hasVideo = !!item.videoSrc;
     const videoBlock = hasVideo
-      ? `<div class="reel-media"><video class="reel-video" src="${item.videoSrc}" playsinline muted loop preload="metadata" controls></video><div class="reel-scrim" aria-hidden="true"></div></div>`
+      ? `<div class="reel-media"><video class="reel-video" src="${item.videoSrc}" playsinline muted loop preload="metadata"></video><div class="reel-scrim" aria-hidden="true"></div></div>`
       : '';
     const extraClass = hasVideo ? ' reel-has-video' : '';
     return `
@@ -1465,10 +1465,12 @@ function initReelDeck(cfg) {
 
     let startY = 0;
     let delta = 0;
+    let gestureStartMs = 0;
 
     vp.addEventListener('touchstart', e => {
       startY = e.touches[0].clientY;
       delta = 0;
+      gestureStartMs = performance.now();
       tr.style.transition = 'none';
     }, { passive: true });
 
@@ -1480,17 +1482,27 @@ function initReelDeck(cfg) {
     }, { passive: true });
 
     vp.addEventListener('touchend', () => {
-      tr.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-      if (delta > 60) goTo(currentIndex + 1);
-      else if (delta < -60) goTo(currentIndex - 1);
-      else goTo(currentIndex);
+      const elapsed = Math.max(1, performance.now() - gestureStartMs);
+      const velocity = Math.abs(delta) / elapsed; // px per ms
+      const slideHeight = vp.offsetHeight || tr.querySelector('.reel')?.offsetHeight || Math.round(window.innerHeight * 0.72);
+      const distanceThreshold = slideHeight * 0.18;
+      const velocityThreshold = 0.55;
+
+      tr.style.transition = 'transform 0.42s cubic-bezier(0.22, 1, 0.36, 1)';
+      if (delta > distanceThreshold || velocity > velocityThreshold && delta > 0) {
+        goTo(currentIndex + 1);
+      } else if (delta < -distanceThreshold || velocity > velocityThreshold && delta < 0) {
+        goTo(currentIndex - 1);
+      } else {
+        goTo(currentIndex);
+      }
       delta = 0;
     });
 
     let wheelTimeout = null;
     vp.addEventListener('wheel', ev => {
       if (wheelTimeout) return;
-      wheelTimeout = setTimeout(() => { wheelTimeout = null; }, 550);
+      wheelTimeout = setTimeout(() => { wheelTimeout = null; }, 380);
       if (ev.deltaY > 25) goTo(currentIndex + 1);
       else if (ev.deltaY < -25) goTo(currentIndex - 1);
     }, { passive: true });

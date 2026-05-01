@@ -189,6 +189,7 @@
       <button class="tab" data-tab="today">Today's Focus</button>
       <button class="tab" data-tab="timer">Focus Timer</button>
       <button class="tab" data-tab="reels">Reels</button>
+      <button class="tab" data-tab="topics">Topics</button>
       <button class="tab" data-tab="wins">Wins</button>
     </nav>
 
@@ -306,6 +307,22 @@
         </button>
         <div class="reels-dots" id="reels-dots"></div>
         <button class="reels-nav-btn" id="reel-next" aria-label="Next">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== TOPICS (same reel UX) ===== -->
+    <section class="panel" id="panel-topics">
+      <div class="reels-viewport" id="topics-viewport">
+        <div class="reels-track" id="topics-track"></div>
+      </div>
+      <div class="reels-nav">
+        <button class="reels-nav-btn" id="topic-prev" aria-label="Previous topic">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+        <div class="reels-dots" id="topics-dots"></div>
+        <button class="reels-nav-btn" id="topic-next" aria-label="Next topic">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
       </div>

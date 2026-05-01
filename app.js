@@ -1154,15 +1154,30 @@ function escHtml(str) {
   return d.innerHTML;
 }
 
-// ===== REELS =====
+// ===== REELS & TOPICS (shared vertical deck) =====
+const REEL_VIDEO_BASE = 'https://storage.googleapis.com/gtv-videos-bucket/sample/';
+const reelVideoSources = [
+  `${REEL_VIDEO_BASE}ForBiggerBlazes.mp4`,
+  `${REEL_VIDEO_BASE}ForBiggerEscapes.mp4`,
+  `${REEL_VIDEO_BASE}ForBiggerFun.mp4`,
+  `${REEL_VIDEO_BASE}ForBiggerJoyrides.mp4`,
+  `${REEL_VIDEO_BASE}ForBiggerMeltdowns.mp4`,
+  `${REEL_VIDEO_BASE}ForBiggerBlazes.mp4`,
+  `${REEL_VIDEO_BASE}ForBiggerEscapes.mp4`,
+  `${REEL_VIDEO_BASE}ForBiggerFun.mp4`,
+  `${REEL_VIDEO_BASE}ForBiggerJoyrides.mp4`,
+  `${REEL_VIDEO_BASE}ForBiggerMeltdowns.mp4`,
+];
+
 const reelsData = [
   {
     emoji: '🧠',
     badge: 'Understanding ADHD',
     title: 'Your Brain Isn\'t Broken',
     body: 'ADHD is a difference in how your brain manages dopamine and norepinephrine. You\'re not lazy or stupid — your brain is wired to seek stimulation. Understanding this is the first step to working WITH your brain, not against it.',
-    action: 'Swipe to learn more',
+    action: 'Swipe for the next clip',
     theme: 1,
+    videoSrc: reelVideoSources[0],
   },
   {
     emoji: '⏱️',
@@ -1171,6 +1186,7 @@ const reelsData = [
     body: 'ADHD brains struggle with time perception. Try this: set timers for everything, not as pressure but as anchors. External time cues replace the internal clock your brain skips over. Body doubling and visual timers help too.',
     action: 'Try the Focus Timer →',
     theme: 4,
+    videoSrc: reelVideoSources[1],
   },
   {
     emoji: '🌊',
@@ -1179,6 +1195,7 @@ const reelsData = [
     body: 'ADHD emotions hit harder and faster. But here\'s the secret: emotions are waves, not tsunamis. They peak in about 90 seconds. If you can ride that wave — breathe, feel it, don\'t react — it WILL pass. Every time.',
     action: 'You\'re building this skill',
     theme: 2,
+    videoSrc: reelVideoSources[2],
   },
   {
     emoji: '🗑️',
@@ -1187,6 +1204,7 @@ const reelsData = [
     body: 'Your working memory holds ~3 things. Non-ADHD brains: maybe 7. That\'s why you feel overwhelmed — too many tabs open. The fix? Externalize everything. Write it down. Brain dump it. Your phone, a notebook, this app — they\'re your external hard drive.',
     action: 'Try Brain Dump →',
     theme: 6,
+    videoSrc: reelVideoSources[3],
   },
   {
     emoji: '🏔️',
@@ -1195,6 +1213,7 @@ const reelsData = [
     body: 'When a task feels impossible, your brain freezes. It\'s not laziness — it\'s your prefrontal cortex overwhelmed by the gap between "here" and "done." The hack: shrink the task until it\'s laughably small. "Open the document." That\'s it. Momentum does the rest.',
     action: 'Break tasks down →',
     theme: 5,
+    videoSrc: reelVideoSources[4],
   },
   {
     emoji: '💤',
@@ -1203,6 +1222,7 @@ const reelsData = [
     body: 'ADHD brains burn more glucose trying to focus. You\'re not imagining the exhaustion — your brain is literally working harder than neurotypical brains to do the same things. Rest isn\'t quitting. It\'s refueling. Schedule it like a meeting.',
     action: 'Be kind to yourself',
     theme: 9,
+    videoSrc: reelVideoSources[5],
   },
   {
     emoji: '🎯',
@@ -1211,6 +1231,7 @@ const reelsData = [
     body: 'Hyperfocus isn\'t a myth — it\'s your brain finding the perfect dopamine match. The catch: you can\'t always choose what triggers it. The strategy: pair boring tasks with novelty (new playlist, new location, body doubling). Make your brain WANT to engage.',
     action: 'Channel it wisely',
     theme: 3,
+    videoSrc: reelVideoSources[6],
   },
   {
     emoji: '🔄',
@@ -1219,6 +1240,7 @@ const reelsData = [
     body: 'Willpower is a depletable resource, and ADHD brains start with less. Stop relying on motivation — it\'s weather, not climate. Instead: reduce friction (put things where you\'ll trip over them), stack habits (after coffee → brain dump), and forgive the misses.',
     action: 'Systems > willpower',
     theme: 7,
+    videoSrc: reelVideoSources[7],
   },
   {
     emoji: '🤝',
@@ -1227,6 +1249,7 @@ const reelsData = [
     body: 'You\'re comparing your chapter 3 to someone else\'s chapter 20. ADHD means you took a different path — not a wrong one. Every strategy you\'ve developed, every workaround you\'ve built? That\'s resilience most people never need to develop.',
     action: 'You\'re doing great',
     theme: 10,
+    videoSrc: reelVideoSources[8],
   },
   {
     emoji: '🌱',
@@ -1235,117 +1258,287 @@ const reelsData = [
     body: 'Every time you pause before reacting, breathe through anxiety, or name your emotion — you\'re strengthening neural pathways. After ~20 repetitions, your brain starts automating the response. You\'re not managing ADHD. You\'re training your brain. And it\'s working.',
     action: 'Keep growing',
     theme: 8,
+    videoSrc: reelVideoSources[9],
   },
 ];
 
-let currentReel = 0;
-const reelsTrack = document.getElementById('reels-track');
-const reelsDots = document.getElementById('reels-dots');
+const topicsData = [
+  {
+    emoji: '🌙',
+    badge: 'Topic · Sleep',
+    title: 'Sleep Is a Skill Stack',
+    body: 'ADHD and delayed sleep phase often go together. Wind-down starts before bed: same wake time, dim light, phone out of the room. You\'re not "bad at sleep" — you\'re fighting biology plus stimulation. Small consistent cues beat heroic willpower.',
+    action: 'Swipe for more topics',
+    theme: 9,
+    videoSrc: reelVideoSources[3],
+  },
+  {
+    emoji: '🍎',
+    badge: 'Topic · Fuel',
+    title: 'Food, Glucose, and Focus',
+    body: 'Skipping meals crashes working memory faster for ADHD brains. Protein + complex carbs at breakfast isn\'t moralizing — it\'s stabilizing blood sugar so your meds and your attention have something to work with.',
+    action: 'Next: relationships',
+    theme: 5,
+    videoSrc: reelVideoSources[0],
+  },
+  {
+    emoji: '💬',
+    badge: 'Topic · RSD',
+    title: 'Rejection Sensitivity Is Real',
+    body: 'That punch-in-the-gut feeling after a neutral comment? It might be RSD — not you being "too sensitive." Name it, wait 90 seconds, check the story you\'re telling yourself. Support beats self-attack.',
+    action: 'You deserve gentleness',
+    theme: 2,
+    videoSrc: reelVideoSources[2],
+  },
+  {
+    emoji: '💼',
+    badge: 'Topic · Work',
+    title: 'Accommodations Are Tools',
+    body: 'Noise-canceling headphones, written instructions, flexible deadlines — these aren\'t cheating. They level the field. You don\'t owe anyone a performance of struggle to "earn" support.',
+    action: 'Ask for what helps',
+    theme: 4,
+    videoSrc: reelVideoSources[1],
+  },
+  {
+    emoji: '🏃',
+    badge: 'Topic · Movement',
+    title: 'Your Brain Needs the Body',
+    body: 'Movement isn\'t a distraction from work — it\'s fuel for dopamine and norepinephrine. A walk before a hard task can do more than another cup of coffee.',
+    action: 'Micro-movements count',
+    theme: 3,
+    videoSrc: reelVideoSources[8],
+  },
+  {
+    emoji: '📱',
+    badge: 'Topic · Tech',
+    title: 'Phones Are Slot Machines',
+    body: 'Infinite scroll is engineered for your dopamine system. Friction helps: grayscale mode, app timers, leaving the phone in another room for focus blocks — not shame, just design.',
+    action: 'Design your environment',
+    theme: 6,
+    videoSrc: reelVideoSources[4],
+  },
+  {
+    emoji: '📚',
+    badge: 'Topic · Learning',
+    title: 'Study Like You Have ADHD',
+    body: 'Pomodoros, active recall, teaching the wall, changing locations when stuck — boring methods fail you because your brain needs novelty and urgency. Work with that, not against it.',
+    action: 'Experiment, don\'t grind',
+    theme: 1,
+    videoSrc: reelVideoSources[6],
+  },
+  {
+    emoji: '💸',
+    badge: 'Topic · Money',
+    title: 'Impulse and Money',
+    body: 'Delayed gratification is harder when the future feels fuzzy. Try friction: 24-hour cart rule, separate "fun" account, automation for bills — systems that decide when you\'re calm for you when you\'re not.',
+    action: 'Automate the boring stuff',
+    theme: 8,
+    videoSrc: reelVideoSources[7],
+  },
+  {
+    emoji: '🧹',
+    badge: 'Topic · Environment',
+    title: 'Clutter Isn\'t a Character Flaw',
+    body: 'Object permanence quirks mean "out of sight, out of mind" — then shame piles on. Visible homes for things, five-minute resets, and "good enough" beats perfect systems you\'ll never maintain.',
+    action: 'Visibility beats pretty bins',
+    theme: 10,
+    videoSrc: reelVideoSources[5],
+  },
+  {
+    emoji: '💊',
+    badge: 'Topic · Meds',
+    title: 'Medication Is a Personal Science',
+    body: 'Stimulants help many people; they\'re not "cheating" your personality away. Finding the right dose takes time and honest check-ins with a prescriber you trust — and it\'s okay if your path isn\'t linear.',
+    action: 'Advocate for yourself',
+    theme: 7,
+    videoSrc: reelVideoSources[9],
+  },
+];
 
-function buildReels() {
-  if (!reelsTrack || !reelsDots) return;
-  reelsTrack.innerHTML = '';
-  reelsDots.innerHTML = '';
-
-  reelsData.forEach((reel, i) => {
-    const slide = document.createElement('div');
-    slide.className = `reel reel-theme-${reel.theme}`;
-    slide.innerHTML = `
-      <span class="reel-counter">${i + 1} / ${reelsData.length}</span>
-      <span class="reel-badge">${escHtml(reel.badge)}</span>
-      <div class="reel-emoji">${reel.emoji}</div>
-      <h3 class="reel-title">${escHtml(reel.title)}</h3>
-      <p class="reel-body">${escHtml(reel.body)}</p>
-      <span class="reel-action">${escHtml(reel.action)}</span>
-      ${i === 0 ? '<span class="reel-swipe-hint">Swipe up or use arrows</span>' : ''}
-    `;
-    reelsTrack.appendChild(slide);
-
-    const dot = document.createElement('div');
-    dot.className = `reel-dot${i === 0 ? ' active' : ''}`;
-    dot.addEventListener('click', () => goToReel(i));
-    reelsDots.appendChild(dot);
-  });
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => goToReel(currentReel));
+function pauseAllReelVideos() {
+  document.querySelectorAll('#panel-reels video.reel-video, #panel-topics video.reel-video').forEach(v => {
+    v.pause();
   });
 }
 
-function goToReel(idx) {
-  if (idx < 0 || idx >= reelsData.length) return;
-  currentReel = idx;
-  const viewport = document.getElementById('reels-viewport');
-  if (!viewport || !reelsTrack) return;
-  let slideHeight = viewport.offsetHeight || viewport.getBoundingClientRect().height;
-  const firstSlide = reelsTrack.querySelector('.reel');
-  if (!slideHeight && firstSlide) slideHeight = firstSlide.offsetHeight;
-  if (!slideHeight) slideHeight = Math.round(window.innerHeight * 0.72);
-  reelsTrack.style.transform = `translateY(-${idx * slideHeight}px)`;
+function initReelDeck(cfg) {
+  let currentIndex = 0;
 
-  document.querySelectorAll('.reel-dot').forEach((d, i) => {
-    d.classList.toggle('active', i === idx);
-  });
+  function track() { return document.getElementById(cfg.trackId); }
+  function viewport() { return document.getElementById(cfg.viewportId); }
+  function dotsEl() { return document.getElementById(cfg.dotsId); }
 
-  const prevBtn = document.getElementById('reel-prev');
-  const nextBtn = document.getElementById('reel-next');
-  if (prevBtn) prevBtn.disabled = idx === 0;
-  if (nextBtn) nextBtn.disabled = idx === reelsData.length - 1;
-}
+  function pauseTrackVideos() {
+    track()?.querySelectorAll('video').forEach(v => v.pause());
+  }
 
-const reelPrevBtn = document.getElementById('reel-prev');
-const reelNextBtn = document.getElementById('reel-next');
-if (reelPrevBtn) reelPrevBtn.addEventListener('click', () => goToReel(currentReel - 1));
-if (reelNextBtn) reelNextBtn.addEventListener('click', () => goToReel(currentReel + 1));
-
-// Touch swipe for reels
-let reelTouchStartY = 0;
-let reelTouchDelta = 0;
-const reelsViewport = document.getElementById('reels-viewport');
-
-if (reelsViewport && reelsTrack) {
-  reelsViewport.addEventListener('touchstart', e => {
-    reelTouchStartY = e.touches[0].clientY;
-    reelTouchDelta = 0;
-    reelsTrack.style.transition = 'none';
-  }, { passive: true });
-
-  reelsViewport.addEventListener('touchmove', e => {
-    reelTouchDelta = reelTouchStartY - e.touches[0].clientY;
-    const slideHeight = reelsViewport.offsetHeight || reelsTrack.querySelector('.reel')?.offsetHeight || Math.round(window.innerHeight * 0.72);
-    const offset = -(currentReel * slideHeight) - reelTouchDelta * 0.4;
-    reelsTrack.style.transform = `translateY(${offset}px)`;
-  }, { passive: true });
-
-  reelsViewport.addEventListener('touchend', () => {
-    reelsTrack.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    if (reelTouchDelta > 60) {
-      goToReel(currentReel + 1);
-    } else if (reelTouchDelta < -60) {
-      goToReel(currentReel - 1);
-    } else {
-      goToReel(currentReel);
+  function playActiveSlideVideo() {
+    const slides = track()?.querySelectorAll('.reel');
+    const slide = slides?.[currentIndex];
+    const vid = slide?.querySelector('video');
+    if (vid) {
+      vid.muted = true;
+      vid.play().catch(() => {});
     }
-    reelTouchDelta = 0;
-  });
+  }
 
-  // Mouse wheel for reels
-  let reelWheelTimeout = null;
-  reelsViewport.addEventListener('wheel', e => {
-    if (reelWheelTimeout) return;
-    reelWheelTimeout = setTimeout(() => { reelWheelTimeout = null; }, 600);
-    if (e.deltaY > 30) goToReel(currentReel + 1);
-    else if (e.deltaY < -30) goToReel(currentReel - 1);
-  }, { passive: true });
+  function goTo(idx) {
+    if (idx < 0 || idx >= cfg.data.length) return;
+    currentIndex = idx;
+    const vp = viewport();
+    const tr = track();
+    const dots = dotsEl();
+    if (!vp || !tr || !dots) return;
+
+    pauseTrackVideos();
+
+    let slideHeight = vp.offsetHeight || vp.getBoundingClientRect().height;
+    const firstSlide = tr.querySelector('.reel');
+    if (!slideHeight && firstSlide) slideHeight = firstSlide.offsetHeight;
+    if (!slideHeight) slideHeight = Math.round(window.innerHeight * 0.72);
+
+    tr.style.transform = `translateY(-${idx * slideHeight}px)`;
+
+    dots.querySelectorAll('.reel-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === idx);
+    });
+
+    const prevBtn = document.getElementById(cfg.prevId);
+    const nextBtn = document.getElementById(cfg.nextId);
+    if (prevBtn) prevBtn.disabled = idx === 0;
+    if (nextBtn) nextBtn.disabled = idx === cfg.data.length - 1;
+
+    playActiveSlideVideo();
+  }
+
+  function slideHtml(item, i, showHint) {
+    const hasVideo = !!item.videoSrc;
+    const videoBlock = hasVideo
+      ? `<div class="reel-media"><video class="reel-video" src="${item.videoSrc}" playsinline muted loop preload="metadata" controls></video><div class="reel-scrim" aria-hidden="true"></div></div>`
+      : '';
+    const extraClass = hasVideo ? ' reel-has-video' : '';
+    return `
+      <div class="reel reel-theme-${item.theme}${extraClass}">
+        ${videoBlock}
+        <div class="reel-fg">
+          <span class="reel-counter">${i + 1} / ${cfg.data.length}</span>
+          <span class="reel-badge">${escHtml(item.badge)}</span>
+          <div class="reel-emoji">${item.emoji}</div>
+          <h3 class="reel-title">${escHtml(item.title)}</h3>
+          <p class="reel-body">${escHtml(item.body)}</p>
+          <span class="reel-action">${escHtml(item.action)}</span>
+          ${showHint ? '<span class="reel-swipe-hint">Swipe up or use arrows</span>' : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  function build() {
+    const tr = track();
+    const dots = dotsEl();
+    if (!tr || !dots) return;
+    tr.innerHTML = '';
+    dots.innerHTML = '';
+    cfg.data.forEach((item, i) => {
+      const wrap = document.createElement('div');
+      wrap.innerHTML = slideHtml(item, i, i === 0).trim();
+      tr.appendChild(wrap.firstElementChild);
+      const dot = document.createElement('div');
+      dot.className = `reel-dot${i === 0 ? ' active' : ''}`;
+      dot.addEventListener('click', () => goTo(i));
+      dots.appendChild(dot);
+    });
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => goTo(currentIndex));
+    });
+  }
+
+  function bindNav() {
+    document.getElementById(cfg.prevId)?.addEventListener('click', () => goTo(currentIndex - 1));
+    document.getElementById(cfg.nextId)?.addEventListener('click', () => goTo(currentIndex + 1));
+  }
+
+  function bindGestures() {
+    const vp = viewport();
+    const tr = track();
+    if (!vp || !tr) return;
+
+    let startY = 0;
+    let delta = 0;
+
+    vp.addEventListener('touchstart', e => {
+      startY = e.touches[0].clientY;
+      delta = 0;
+      tr.style.transition = 'none';
+    }, { passive: true });
+
+    vp.addEventListener('touchmove', e => {
+      delta = startY - e.touches[0].clientY;
+      const slideHeight = vp.offsetHeight || tr.querySelector('.reel')?.offsetHeight || Math.round(window.innerHeight * 0.72);
+      const offset = -(currentIndex * slideHeight) - delta * 0.4;
+      tr.style.transform = `translateY(${offset}px)`;
+    }, { passive: true });
+
+    vp.addEventListener('touchend', () => {
+      tr.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      if (delta > 60) goTo(currentIndex + 1);
+      else if (delta < -60) goTo(currentIndex - 1);
+      else goTo(currentIndex);
+      delta = 0;
+    });
+
+    let wheelTimeout = null;
+    vp.addEventListener('wheel', ev => {
+      if (wheelTimeout) return;
+      wheelTimeout = setTimeout(() => { wheelTimeout = null; }, 550);
+      if (ev.deltaY > 25) goTo(currentIndex + 1);
+      else if (ev.deltaY < -25) goTo(currentIndex - 1);
+    }, { passive: true });
+  }
+
+  function onResize() {
+    const panel = document.getElementById(cfg.panelId);
+    if (panel?.classList.contains('active')) goTo(currentIndex);
+  }
+
+  bindNav();
+  bindGestures();
+  build();
+
+  return {
+    goTo,
+    next() { goTo(currentIndex + 1); },
+    prev() { goTo(currentIndex - 1); },
+    onResize,
+    tabName: cfg.tabName,
+  };
 }
 
-buildReels();
+const reelsDeck = initReelDeck({
+  panelId: 'panel-reels',
+  viewportId: 'reels-viewport',
+  trackId: 'reels-track',
+  dotsId: 'reels-dots',
+  prevId: 'reel-prev',
+  nextId: 'reel-next',
+  tabName: 'reels',
+  data: reelsData,
+});
+
+const topicsDeck = initReelDeck({
+  panelId: 'panel-topics',
+  viewportId: 'topics-viewport',
+  trackId: 'topics-track',
+  dotsId: 'topics-dots',
+  prevId: 'topic-prev',
+  nextId: 'topic-next',
+  tabName: 'topics',
+  data: topicsData,
+});
 
 window.addEventListener('resize', () => {
-  const reelsPanel = document.getElementById('panel-reels');
-  if (reelsPanel && reelsPanel.classList.contains('active')) {
-    goToReel(currentReel);
-  }
+  reelsDeck.onResize();
+  topicsDeck.onResize();
 });
 
 // ===== KEYBOARD SHORTCUTS =====
@@ -1356,26 +1549,35 @@ document.addEventListener('keydown', e => {
   if (e.key === '2') switchTab('today');
   if (e.key === '3') switchTab('timer');
   if (e.key === '4') switchTab('reels');
-  if (e.key === '5') switchTab('wins');
-  if (e.key === ' ' && document.querySelector('.tab[data-tab="timer"]').classList.contains('active')) {
+  if (e.key === '5') switchTab('topics');
+  if (e.key === '6') switchTab('wins');
+  if (e.key === ' ' && document.querySelector('.tab[data-tab="timer"]')?.classList.contains('active')) {
     e.preventDefault();
     timerRunning ? pauseTimer() : startTimer();
   }
 
   if (document.querySelector('.tab[data-tab="reels"]')?.classList.contains('active')) {
-    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); goToReel(currentReel + 1); }
-    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); goToReel(currentReel - 1); }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); reelsDeck.next(); }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); reelsDeck.prev(); }
+  }
+  if (document.querySelector('.tab[data-tab="topics"]')?.classList.contains('active')) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); topicsDeck.next(); }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); topicsDeck.prev(); }
   }
 });
 
 function switchTab(name) {
+  pauseAllReelVideos();
   tabs.forEach(t => t.classList.remove('active'));
   panels.forEach(p => p.classList.remove('active'));
   document.querySelector(`.tab[data-tab="${name}"]`).classList.add('active');
   document.getElementById(`panel-${name}`).classList.add('active');
-  if (name === 'reels') {
+  if (name === 'reels' || name === 'topics') {
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => goToReel(currentReel));
+      requestAnimationFrame(() => {
+        if (name === 'reels') reelsDeck.onResize();
+        if (name === 'topics') topicsDeck.onResize();
+      });
     });
   }
 }
@@ -1416,6 +1618,6 @@ window.addEventListener('beforeinstallprompt', e => {
 
 // Handle URL hash for shortcuts
 const hash = window.location.hash.replace('#', '');
-if (['dump', 'today', 'timer', 'reels', 'wins'].includes(hash)) {
+if (['dump', 'today', 'timer', 'reels', 'topics', 'wins'].includes(hash)) {
   switchTab(hash);
 }

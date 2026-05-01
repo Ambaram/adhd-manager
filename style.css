@@ -1235,6 +1235,121 @@ body {
   padding: 4px;
 }
 
+/* ===== "I ALREADY CALMED DOWN" BUTTON ===== */
+.mood-self-reg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: var(--success-soft);
+  border: 2px solid var(--success);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: var(--font);
+  animation: calmFadeIn 0.4s ease;
+}
+
+.mood-self-reg:hover {
+  background: var(--success);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.mood-self-reg-icon { font-size: 1.2rem; }
+
+/* ===== GROWTH JOURNEY SECTION ===== */
+.growth-section {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  animation: fadeIn 0.3s ease;
+}
+
+.growth-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.growth-meter {
+  margin-bottom: 1rem;
+}
+
+.growth-meter-fill {
+  height: 8px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--success) 60%, #ffd700 100%);
+  border-radius: 4px;
+  transition: width 0.8s ease;
+  width: 0%;
+}
+
+.growth-meter-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.growth-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.growth-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.growth-stat-num {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+.growth-message {
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.5;
+  padding: 0.75rem;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.75rem;
+}
+
+.growth-tip {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 0.75rem;
+  background: var(--warm-soft);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--warm);
+}
+
+.growth-tip-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+.growth-tip-text {
+  font-size: 0.82rem;
+  color: var(--text);
+  line-height: 1.55;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 480px) {
   #app { padding: 0.75rem 1rem 3rem; }
@@ -1251,4 +1366,5 @@ body {
   .mood-options { grid-template-columns: repeat(2, 1fr); }
   .mood-title { font-size: 1.3rem; }
   .grounding-content { padding: 1.5rem 1rem 3rem; }
+  .growth-stats { flex-wrap: wrap; gap: 0.5rem; }
 }

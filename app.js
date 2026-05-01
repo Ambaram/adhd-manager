@@ -13,6 +13,12 @@ const defaultState = () => ({
   theme: 'light',
   lastCalm: null,
   moodLog: [],
+  reg: {
+    breathUses: 0,
+    groundUses: 0,
+    selfCalmed: 0,
+    milestones: [],
+  },
 });
 
 let state = loadState();
@@ -49,25 +55,85 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
 
 applyTheme();
 
+// ===== GROWTH SYSTEM =====
+// Three phases: guided (0-7 uses), growing (8-20 uses), independent (21+)
+function getGrowthPhase() {
+  const r = state.reg || { breathUses: 0, groundUses: 0, selfCalmed: 0 };
+  const total = r.breathUses + r.groundUses + r.selfCalmed;
+  if (total >= 21) return 'independent';
+  if (total >= 8) return 'growing';
+  return 'guided';
+}
+
+function getGrowthTotal() {
+  const r = state.reg || { breathUses: 0, groundUses: 0, selfCalmed: 0 };
+  return r.breathUses + r.groundUses + r.selfCalmed;
+}
+
+function trackReg(type) {
+  if (!state.reg) state.reg = { breathUses: 0, groundUses: 0, selfCalmed: 0, milestones: [] };
+  if (type === 'breath') state.reg.breathUses++;
+  if (type === 'ground') state.reg.groundUses++;
+  if (type === 'self') state.reg.selfCalmed++;
+  checkMilestones();
+  saveState();
+}
+
+function checkMilestones() {
+  const r = state.reg;
+  if (!r.milestones) r.milestones = [];
+  const total = r.breathUses + r.groundUses + r.selfCalmed;
+  const checks = [
+    { id: 'first_breath', at: () => r.breathUses >= 1, text: 'First breathing exercise' },
+    { id: 'first_ground', at: () => r.groundUses >= 1, text: 'First grounding session' },
+    { id: 'five_total', at: () => total >= 5, text: '5 regulation moments' },
+    { id: 'first_self', at: () => r.selfCalmed >= 1, text: 'First time self-regulated' },
+    { id: 'growing', at: () => total >= 8, text: 'Entered Growing phase' },
+    { id: 'three_self', at: () => r.selfCalmed >= 3, text: 'Self-regulated 3 times' },
+    { id: 'fifteen', at: () => total >= 15, text: '15 regulation moments' },
+    { id: 'independent', at: () => total >= 21, text: 'Reached Independent phase' },
+    { id: 'ten_self', at: () => r.selfCalmed >= 10, text: 'Self-regulated 10 times' },
+  ];
+  checks.forEach(m => {
+    if (!r.milestones.includes(m.id) && m.at()) {
+      r.milestones.push(m.id);
+      addWin('🌱 Milestone: ' + m.text);
+    }
+  });
+}
+
 // ===== CALM LANDING SCREEN =====
 const calmLanding = document.getElementById('calm-landing');
 const calmBreathLabel = document.getElementById('calm-breath-label');
 const calmSkip = document.getElementById('calm-skip');
 const moodCheckin = document.getElementById('mood-checkin');
 
-const calmMessages = [
-  { title: "Take a moment.", sub: "You're safe here. Nothing needs to happen right now." },
-  { title: "Pause. Breathe.", sub: "This moment is yours. No rush, no pressure." },
-  { title: "Hey, you showed up.", sub: "That already counts. Let's take it slow." },
-  { title: "Welcome back.", sub: "Before we begin, let's just breathe together." },
-  { title: "One breath at a time.", sub: "You don't have to figure it all out right now." },
-];
+const calmMessagesByPhase = {
+  guided: [
+    { title: "Take a moment.", sub: "You're safe here. Nothing needs to happen right now." },
+    { title: "Pause. Breathe.", sub: "This moment is yours. No rush, no pressure." },
+    { title: "Hey, you showed up.", sub: "That already counts. Let's take it slow." },
+    { title: "Welcome back.", sub: "Before we begin, let's just breathe together." },
+  ],
+  growing: [
+    { title: "You know the drill.", sub: "One breath to center yourself. You're getting good at this." },
+    { title: "Welcome back.", sub: "You've been building real skills. Take a breath if you'd like." },
+    { title: "Quick check-in.", sub: "You're learning to read your own signals. That's real progress." },
+  ],
+  independent: [
+    { title: "Hey.", sub: "You already know how to calm yourself. We're just here when you want us." },
+    { title: "You've got this.", sub: "You've proven you can regulate on your own. Use us if you'd like." },
+    { title: "Welcome back, pro.", sub: "You don't need us to breathe — but we're here anyway." },
+  ],
+};
 
 function shouldShowCalm() {
   const lastCalm = state.lastCalm;
   if (!lastCalm) return true;
+  const phase = getGrowthPhase();
+  const cooldownHours = phase === 'guided' ? 4 : phase === 'growing' ? 8 : 24;
   const hours = (Date.now() - lastCalm) / (1000 * 60 * 60);
-  return hours >= 4;
+  return hours >= cooldownHours;
 }
 
 function initCalmScreen() {
@@ -76,9 +142,19 @@ function initCalmScreen() {
     return;
   }
 
-  const msg = calmMessages[Math.floor(Math.random() * calmMessages.length)];
+  const phase = getGrowthPhase();
+  const msgs = calmMessagesByPhase[phase];
+  const msg = msgs[Math.floor(Math.random() * msgs.length)];
   document.getElementById('calm-title').textContent = msg.title;
   document.getElementById('calm-subtitle').textContent = msg.sub;
+
+  if (phase === 'independent') {
+    calmSkip.textContent = "Let's go";
+    calmSkip.style.animationDelay = '0.5s';
+  } else if (phase === 'growing') {
+    calmSkip.textContent = "I'm centered";
+    calmSkip.style.animationDelay = '1s';
+  }
 
   const breathPhrases = ['Breathe in...', 'Hold...', 'Breathe out...', 'Hold...'];
   let breathIdx = 0;
@@ -118,6 +194,12 @@ function showMoodCheckin() {
   const responseText = document.getElementById('mood-response-text');
   const continueBtn = document.getElementById('mood-continue');
   const groundBtn = document.getElementById('mood-ground');
+  const selfRegBtn = document.getElementById('mood-self-reg');
+
+  const phase = getGrowthPhase();
+  if (phase !== 'guided') {
+    selfRegBtn.style.display = 'flex';
+  }
 
   btns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -139,7 +221,28 @@ function showMoodCheckin() {
       groundBtn.style.display = 'none';
       response.style.display = 'block';
       document.getElementById('mood-options').style.display = 'none';
+      selfRegBtn.style.display = 'none';
     });
+  });
+
+  selfRegBtn.addEventListener('click', () => {
+    trackReg('self');
+    state.moodLog.push({ mood: 'self-regulated', timestamp: Date.now(), date: new Date().toDateString() });
+    saveState();
+
+    const selfMessages = [
+      "You handled it before you even got here. That's real strength.",
+      "Look at you — regulating on your own. You're building something lasting.",
+      "You didn't need the app this time. That's the whole point.",
+      "The skills you've practiced are becoming second nature.",
+    ];
+    responseText.textContent = selfMessages[Math.floor(Math.random() * selfMessages.length)];
+    groundBtn.style.display = 'none';
+    response.style.display = 'block';
+    document.getElementById('mood-options').style.display = 'none';
+    selfRegBtn.style.display = 'none';
+    renderWins();
+    renderGrowth();
   });
 
   continueBtn.addEventListener('click', () => {
@@ -161,17 +264,43 @@ const instantCalmWhisper = document.getElementById('instant-calm-whisper');
 let instantCalmInterval = null;
 let instantCalmBreathCount = 0;
 
-const calmWhispers = {
-  overwhelmed: [
-    "It's okay. You're safe.",
-    "You don't have to solve anything right now.",
-    "Just breathe with me.",
-  ],
-  anxious: [
-    "You're here. That's enough.",
-    "Let's slow everything down.",
-    "Nothing else matters for the next few breaths.",
-  ],
+const calmWhispersByPhase = {
+  guided: {
+    overwhelmed: [
+      "It's okay. You're safe.",
+      "You don't have to solve anything right now.",
+      "Just breathe with me.",
+    ],
+    anxious: [
+      "You're here. That's enough.",
+      "Let's slow everything down.",
+      "Nothing else matters for the next few breaths.",
+    ],
+  },
+  growing: {
+    overwhelmed: [
+      "You've done this before. You know it works.",
+      "This feeling will pass. You've felt it pass before.",
+      "You're stronger at this than you were last week.",
+    ],
+    anxious: [
+      "You know the way through this.",
+      "Your body remembers how to calm down. Let it.",
+      "Each time you do this, it gets a little easier.",
+    ],
+  },
+  independent: {
+    overwhelmed: [
+      "You already know what to do.",
+      "This is just a visit. You don't live here anymore.",
+      "You've built this skill. Trust it.",
+    ],
+    anxious: [
+      "You've got a toolkit now. Use what works for you.",
+      "This feeling is temporary. You know that from experience.",
+      "Your nervous system knows the way back. Let it lead.",
+    ],
+  },
 };
 
 function openInstantCalm(mood) {
@@ -179,7 +308,9 @@ function openInstantCalm(mood) {
   instantCalm.classList.remove('fade-out');
   instantCalmBreathCount = 0;
 
-  const whispers = calmWhispers[mood] || calmWhispers.overwhelmed;
+  const phase = getGrowthPhase();
+  const whisperSet = calmWhispersByPhase[phase] || calmWhispersByPhase.guided;
+  const whispers = whisperSet[mood] || whisperSet.overwhelmed;
   instantCalmWhisper.textContent = whispers[0];
   let whisperIdx = 0;
 
@@ -204,7 +335,11 @@ function openInstantCalm(mood) {
     }
   }, 2000);
 
-  document.getElementById('instant-calm-exit').addEventListener('click', closeInstantCalm, { once: true });
+  document.getElementById('instant-calm-exit').addEventListener('click', () => {
+    trackReg('breath');
+    renderGrowth();
+    closeInstantCalm();
+  }, { once: true });
 }
 
 function closeInstantCalm() {
@@ -212,6 +347,72 @@ function closeInstantCalm() {
   instantCalmInterval = null;
   instantCalm.classList.add('fade-out');
   setTimeout(() => { instantCalm.style.display = 'none'; }, 800);
+}
+
+// ===== SCIENCE TIPS (teach WHY it works) =====
+const scienceTips = [
+  "Deep breathing activates your vagus nerve, which tells your brain to switch from 'fight-or-flight' to 'rest-and-digest.' You're literally rewiring your stress response.",
+  "The 5-4-3-2-1 grounding technique works because it redirects your prefrontal cortex to sensory input, interrupting the anxiety loop in your amygdala.",
+  "Each time you regulate yourself, you strengthen neural pathways for calm. It's like a muscle — the more you use it, the stronger it gets.",
+  "Studies show that naming your emotion ('I feel anxious') reduces amygdala activity by up to 50%. Just acknowledging the feeling is a regulation skill.",
+  "After about 20 repetitions of a coping technique, your brain starts to automate it. You're building an automatic calm response.",
+  "ADHD brains have lower baseline dopamine, which makes emotional regulation harder — but not impossible. Every practice session builds your capacity.",
+  "Your nervous system has 'memory.' Each time you calm down from a heightened state, your body remembers the way back faster next time.",
+  "Box breathing (4 counts in, hold, out, hold) increases heart rate variability, which is a biomarker for emotional resilience. You're literally building resilience.",
+  "The feeling of being overwhelmed is your brain trying to process too many threads at once. Externalizing them (brain dump) frees working memory and reduces that feeling.",
+  "Research shows that self-regulation is not a fixed trait — it's a learnable skill. You're not broken; you're in training.",
+];
+
+// ===== GROWTH RENDERING =====
+function renderGrowth() {
+  const section = document.getElementById('growth-section');
+  const r = state.reg || { breathUses: 0, groundUses: 0, selfCalmed: 0 };
+  const total = r.breathUses + r.groundUses + r.selfCalmed;
+
+  if (total === 0) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = 'block';
+
+  document.getElementById('growth-breath').textContent = r.breathUses;
+  document.getElementById('growth-ground').textContent = r.groundUses;
+  document.getElementById('growth-self').textContent = r.selfCalmed;
+
+  const maxForMeter = 30;
+  const pct = Math.min((total / maxForMeter) * 100, 100);
+  document.getElementById('growth-meter-fill').style.width = pct + '%';
+
+  const phase = getGrowthPhase();
+  const msgEl = document.getElementById('growth-message');
+
+  const growthMessages = {
+    guided: [
+      "You're learning to recognize what your body needs. That's step one.",
+      "Every breathing exercise is a deposit in your emotional resilience bank.",
+      "You're building skills that will last a lifetime. Keep going.",
+    ],
+    growing: [
+      "You're starting to catch yourself before spiraling. That's huge.",
+      "Notice how it gets a little easier each time? That's your brain adapting.",
+      "You're becoming your own best regulator. The app is just the training ground.",
+    ],
+    independent: [
+      "You've built real, lasting regulation skills. This app is your backup, not your lifeline.",
+      "You can do this anywhere — in a meeting, on a walk, in bed. No app needed.",
+      "The goal was always for you to not need us. Look how far you've come.",
+    ],
+  };
+  const msgs = growthMessages[phase];
+  msgEl.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+
+  const tipEl = document.getElementById('growth-tip');
+  const tipText = document.getElementById('growth-tip-text');
+  if (total >= 3) {
+    tipEl.style.display = 'flex';
+    tipText.textContent = scienceTips[total % scienceTips.length];
+  }
 }
 
 // ===== GROUNDING EXERCISE (5-4-3-2-1) =====
@@ -275,9 +476,11 @@ function addGroundItem(step) {
         document.getElementById(`ground-input-${nextStep}`).focus();
       }, 400);
     } else {
+      trackReg('ground');
       setTimeout(() => {
         document.getElementById('grounding-steps').style.display = 'none';
         groundingComplete.style.display = 'block';
+        renderGrowth();
       }, 400);
     }
   }
@@ -846,6 +1049,7 @@ function renderWins() {
   document.getElementById('stat-tasks').textContent = tasksCompleted + allSubtasksDone;
   document.getElementById('stat-focus').textContent = state.focusSessions;
   document.getElementById('stat-streak').textContent = state.streak;
+  renderGrowth();
 }
 
 renderWins();

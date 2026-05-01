@@ -68,6 +68,10 @@
           <span class="mood-label">Good!</span>
         </button>
       </div>
+      <button class="mood-self-reg" id="mood-self-reg" style="display:none">
+        <span class="mood-self-reg-icon">💪</span>
+        <span>I already calmed myself down</span>
+      </button>
       <div class="mood-response" id="mood-response" style="display:none">
         <p class="mood-response-text" id="mood-response-text"></p>
         <button class="btn-primary" id="mood-continue">Let's go</button>
@@ -315,6 +319,38 @@
         <div class="empty-icon">🏆</div>
         <p>Complete tasks or focus sessions to see your wins!</p>
       </div>
+      <!-- Growth Journey -->
+      <div class="growth-section" id="growth-section" style="display:none">
+        <h3 class="growth-title">Your Regulation Journey</h3>
+        <div class="growth-meter">
+          <div class="growth-meter-fill" id="growth-meter-fill"></div>
+          <div class="growth-meter-labels">
+            <span>Guided</span>
+            <span>Growing</span>
+            <span>Independent</span>
+          </div>
+        </div>
+        <div class="growth-stats">
+          <div class="growth-stat">
+            <span class="growth-stat-num" id="growth-breath">0</span>
+            <span class="growth-stat-label">Breathing exercises</span>
+          </div>
+          <div class="growth-stat">
+            <span class="growth-stat-num" id="growth-ground">0</span>
+            <span class="growth-stat-label">Grounding sessions</span>
+          </div>
+          <div class="growth-stat">
+            <span class="growth-stat-num" id="growth-self">0</span>
+            <span class="growth-stat-label">Self-regulated</span>
+          </div>
+        </div>
+        <p class="growth-message" id="growth-message"></p>
+        <div class="growth-tip" id="growth-tip" style="display:none">
+          <span class="growth-tip-icon">🧪</span>
+          <p class="growth-tip-text" id="growth-tip-text"></p>
+        </div>
+      </div>
+
       <button class="btn-secondary" id="clear-day" style="margin-top:1rem">Start Fresh Day</button>
     </section>
 

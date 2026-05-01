@@ -536,10 +536,7 @@ const panels = document.querySelectorAll('.panel');
 
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active'));
-    panels.forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(`panel-${tab.dataset.tab}`).classList.add('active');
+    switchTab(tab.dataset.tab);
   });
 });
 
@@ -1246,6 +1243,7 @@ const reelsTrack = document.getElementById('reels-track');
 const reelsDots = document.getElementById('reels-dots');
 
 function buildReels() {
+  if (!reelsTrack || !reelsDots) return;
   reelsTrack.innerHTML = '';
   reelsDots.innerHTML = '';
 
@@ -1254,11 +1252,11 @@ function buildReels() {
     slide.className = `reel reel-theme-${reel.theme}`;
     slide.innerHTML = `
       <span class="reel-counter">${i + 1} / ${reelsData.length}</span>
-      <span class="reel-badge">${reel.badge}</span>
+      <span class="reel-badge">${escHtml(reel.badge)}</span>
       <div class="reel-emoji">${reel.emoji}</div>
-      <h3 class="reel-title">${reel.title}</h3>
-      <p class="reel-body">${reel.body}</p>
-      <span class="reel-action">${reel.action}</span>
+      <h3 class="reel-title">${escHtml(reel.title)}</h3>
+      <p class="reel-body">${escHtml(reel.body)}</p>
+      <span class="reel-action">${escHtml(reel.action)}</span>
       ${i === 0 ? '<span class="reel-swipe-hint">Swipe up or use arrows</span>' : ''}
     `;
     reelsTrack.appendChild(slide);
@@ -1268,65 +1266,87 @@ function buildReels() {
     dot.addEventListener('click', () => goToReel(i));
     reelsDots.appendChild(dot);
   });
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => goToReel(currentReel));
+  });
 }
 
 function goToReel(idx) {
   if (idx < 0 || idx >= reelsData.length) return;
   currentReel = idx;
   const viewport = document.getElementById('reels-viewport');
-  const slideHeight = viewport.offsetHeight;
+  if (!viewport || !reelsTrack) return;
+  let slideHeight = viewport.offsetHeight || viewport.getBoundingClientRect().height;
+  const firstSlide = reelsTrack.querySelector('.reel');
+  if (!slideHeight && firstSlide) slideHeight = firstSlide.offsetHeight;
+  if (!slideHeight) slideHeight = Math.round(window.innerHeight * 0.72);
   reelsTrack.style.transform = `translateY(-${idx * slideHeight}px)`;
 
   document.querySelectorAll('.reel-dot').forEach((d, i) => {
     d.classList.toggle('active', i === idx);
   });
 
-  document.getElementById('reel-prev').disabled = idx === 0;
-  document.getElementById('reel-next').disabled = idx === reelsData.length - 1;
+  const prevBtn = document.getElementById('reel-prev');
+  const nextBtn = document.getElementById('reel-next');
+  if (prevBtn) prevBtn.disabled = idx === 0;
+  if (nextBtn) nextBtn.disabled = idx === reelsData.length - 1;
 }
 
-document.getElementById('reel-prev').addEventListener('click', () => goToReel(currentReel - 1));
-document.getElementById('reel-next').addEventListener('click', () => goToReel(currentReel + 1));
+const reelPrevBtn = document.getElementById('reel-prev');
+const reelNextBtn = document.getElementById('reel-next');
+if (reelPrevBtn) reelPrevBtn.addEventListener('click', () => goToReel(currentReel - 1));
+if (reelNextBtn) reelNextBtn.addEventListener('click', () => goToReel(currentReel + 1));
 
 // Touch swipe for reels
 let reelTouchStartY = 0;
 let reelTouchDelta = 0;
 const reelsViewport = document.getElementById('reels-viewport');
 
-reelsViewport.addEventListener('touchstart', e => {
-  reelTouchStartY = e.touches[0].clientY;
-  reelsTrack.style.transition = 'none';
-}, { passive: true });
+if (reelsViewport && reelsTrack) {
+  reelsViewport.addEventListener('touchstart', e => {
+    reelTouchStartY = e.touches[0].clientY;
+    reelTouchDelta = 0;
+    reelsTrack.style.transition = 'none';
+  }, { passive: true });
 
-reelsViewport.addEventListener('touchmove', e => {
-  reelTouchDelta = reelTouchStartY - e.touches[0].clientY;
-  const slideHeight = reelsViewport.offsetHeight;
-  const offset = -(currentReel * slideHeight) - reelTouchDelta * 0.4;
-  reelsTrack.style.transform = `translateY(${offset}px)`;
-}, { passive: true });
+  reelsViewport.addEventListener('touchmove', e => {
+    reelTouchDelta = reelTouchStartY - e.touches[0].clientY;
+    const slideHeight = reelsViewport.offsetHeight || reelsTrack.querySelector('.reel')?.offsetHeight || Math.round(window.innerHeight * 0.72);
+    const offset = -(currentReel * slideHeight) - reelTouchDelta * 0.4;
+    reelsTrack.style.transform = `translateY(${offset}px)`;
+  }, { passive: true });
 
-reelsViewport.addEventListener('touchend', () => {
-  reelsTrack.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-  if (reelTouchDelta > 60) {
-    goToReel(currentReel + 1);
-  } else if (reelTouchDelta < -60) {
-    goToReel(currentReel - 1);
-  } else {
-    goToReel(currentReel);
-  }
-  reelTouchDelta = 0;
-});
+  reelsViewport.addEventListener('touchend', () => {
+    reelsTrack.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    if (reelTouchDelta > 60) {
+      goToReel(currentReel + 1);
+    } else if (reelTouchDelta < -60) {
+      goToReel(currentReel - 1);
+    } else {
+      goToReel(currentReel);
+    }
+    reelTouchDelta = 0;
+  });
 
-// Mouse wheel for reels
-let reelWheelTimeout = null;
-reelsViewport.addEventListener('wheel', e => {
-  if (reelWheelTimeout) return;
-  reelWheelTimeout = setTimeout(() => { reelWheelTimeout = null; }, 600);
-  if (e.deltaY > 30) goToReel(currentReel + 1);
-  else if (e.deltaY < -30) goToReel(currentReel - 1);
-}, { passive: true });
+  // Mouse wheel for reels
+  let reelWheelTimeout = null;
+  reelsViewport.addEventListener('wheel', e => {
+    if (reelWheelTimeout) return;
+    reelWheelTimeout = setTimeout(() => { reelWheelTimeout = null; }, 600);
+    if (e.deltaY > 30) goToReel(currentReel + 1);
+    else if (e.deltaY < -30) goToReel(currentReel - 1);
+  }, { passive: true });
+}
 
 buildReels();
+
+window.addEventListener('resize', () => {
+  const reelsPanel = document.getElementById('panel-reels');
+  if (reelsPanel && reelsPanel.classList.contains('active')) {
+    goToReel(currentReel);
+  }
+});
 
 // ===== KEYBOARD SHORTCUTS =====
 document.addEventListener('keydown', e => {
@@ -1342,7 +1362,7 @@ document.addEventListener('keydown', e => {
     timerRunning ? pauseTimer() : startTimer();
   }
 
-  if (document.querySelector('.tab[data-tab="reels"]').classList.contains('active')) {
+  if (document.querySelector('.tab[data-tab="reels"]')?.classList.contains('active')) {
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); goToReel(currentReel + 1); }
     if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); goToReel(currentReel - 1); }
   }
@@ -1353,6 +1373,11 @@ function switchTab(name) {
   panels.forEach(p => p.classList.remove('active'));
   document.querySelector(`.tab[data-tab="${name}"]`).classList.add('active');
   document.getElementById(`panel-${name}`).classList.add('active');
+  if (name === 'reels') {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => goToReel(currentReel));
+    });
+  }
 }
 
 // ===== PWA INSTALL PROMPT =====

@@ -1157,6 +1157,177 @@ function escHtml(str) {
   return d.innerHTML;
 }
 
+// ===== REELS =====
+const reelsData = [
+  {
+    emoji: '🧠',
+    badge: 'Understanding ADHD',
+    title: 'Your Brain Isn\'t Broken',
+    body: 'ADHD is a difference in how your brain manages dopamine and norepinephrine. You\'re not lazy or stupid — your brain is wired to seek stimulation. Understanding this is the first step to working WITH your brain, not against it.',
+    action: 'Swipe to learn more',
+    theme: 1,
+  },
+  {
+    emoji: '⏱️',
+    badge: 'Time Blindness',
+    title: 'Why 5 Minutes Feels Like 5 Hours (or 5 Seconds)',
+    body: 'ADHD brains struggle with time perception. Try this: set timers for everything, not as pressure but as anchors. External time cues replace the internal clock your brain skips over. Body doubling and visual timers help too.',
+    action: 'Try the Focus Timer →',
+    theme: 4,
+  },
+  {
+    emoji: '🌊',
+    badge: 'Emotional Regulation',
+    title: 'The Emotion Wave',
+    body: 'ADHD emotions hit harder and faster. But here\'s the secret: emotions are waves, not tsunamis. They peak in about 90 seconds. If you can ride that wave — breathe, feel it, don\'t react — it WILL pass. Every time.',
+    action: 'You\'re building this skill',
+    theme: 2,
+  },
+  {
+    emoji: '🗑️',
+    badge: 'Working Memory',
+    title: 'Get It Out of Your Head',
+    body: 'Your working memory holds ~3 things. Non-ADHD brains: maybe 7. That\'s why you feel overwhelmed — too many tabs open. The fix? Externalize everything. Write it down. Brain dump it. Your phone, a notebook, this app — they\'re your external hard drive.',
+    action: 'Try Brain Dump →',
+    theme: 6,
+  },
+  {
+    emoji: '🏔️',
+    badge: 'Task Paralysis',
+    title: 'The Mountain Is Made of Pebbles',
+    body: 'When a task feels impossible, your brain freezes. It\'s not laziness — it\'s your prefrontal cortex overwhelmed by the gap between "here" and "done." The hack: shrink the task until it\'s laughably small. "Open the document." That\'s it. Momentum does the rest.',
+    action: 'Break tasks down →',
+    theme: 5,
+  },
+  {
+    emoji: '💤',
+    badge: 'Rest & Recovery',
+    title: 'Rest Is Productive',
+    body: 'ADHD brains burn more glucose trying to focus. You\'re not imagining the exhaustion — your brain is literally working harder than neurotypical brains to do the same things. Rest isn\'t quitting. It\'s refueling. Schedule it like a meeting.',
+    action: 'Be kind to yourself',
+    theme: 9,
+  },
+  {
+    emoji: '🎯',
+    badge: 'Hyperfocus',
+    title: 'Your Superpower (With a Catch)',
+    body: 'Hyperfocus isn\'t a myth — it\'s your brain finding the perfect dopamine match. The catch: you can\'t always choose what triggers it. The strategy: pair boring tasks with novelty (new playlist, new location, body doubling). Make your brain WANT to engage.',
+    action: 'Channel it wisely',
+    theme: 3,
+  },
+  {
+    emoji: '🔄',
+    badge: 'Habit Building',
+    title: 'Forget Discipline. Build Systems.',
+    body: 'Willpower is a depletable resource, and ADHD brains start with less. Stop relying on motivation — it\'s weather, not climate. Instead: reduce friction (put things where you\'ll trip over them), stack habits (after coffee → brain dump), and forgive the misses.',
+    action: 'Systems > willpower',
+    theme: 7,
+  },
+  {
+    emoji: '🤝',
+    badge: 'Self-Compassion',
+    title: 'You\'re Not Behind',
+    body: 'You\'re comparing your chapter 3 to someone else\'s chapter 20. ADHD means you took a different path — not a wrong one. Every strategy you\'ve developed, every workaround you\'ve built? That\'s resilience most people never need to develop.',
+    action: 'You\'re doing great',
+    theme: 10,
+  },
+  {
+    emoji: '🌱',
+    badge: 'Growth',
+    title: 'Regulation Is a Skill, Not a Trait',
+    body: 'Every time you pause before reacting, breathe through anxiety, or name your emotion — you\'re strengthening neural pathways. After ~20 repetitions, your brain starts automating the response. You\'re not managing ADHD. You\'re training your brain. And it\'s working.',
+    action: 'Keep growing',
+    theme: 8,
+  },
+];
+
+let currentReel = 0;
+const reelsTrack = document.getElementById('reels-track');
+const reelsDots = document.getElementById('reels-dots');
+
+function buildReels() {
+  reelsTrack.innerHTML = '';
+  reelsDots.innerHTML = '';
+
+  reelsData.forEach((reel, i) => {
+    const slide = document.createElement('div');
+    slide.className = `reel reel-theme-${reel.theme}`;
+    slide.innerHTML = `
+      <span class="reel-counter">${i + 1} / ${reelsData.length}</span>
+      <span class="reel-badge">${reel.badge}</span>
+      <div class="reel-emoji">${reel.emoji}</div>
+      <h3 class="reel-title">${reel.title}</h3>
+      <p class="reel-body">${reel.body}</p>
+      <span class="reel-action">${reel.action}</span>
+      ${i === 0 ? '<span class="reel-swipe-hint">Swipe up or use arrows</span>' : ''}
+    `;
+    reelsTrack.appendChild(slide);
+
+    const dot = document.createElement('div');
+    dot.className = `reel-dot${i === 0 ? ' active' : ''}`;
+    dot.addEventListener('click', () => goToReel(i));
+    reelsDots.appendChild(dot);
+  });
+}
+
+function goToReel(idx) {
+  if (idx < 0 || idx >= reelsData.length) return;
+  currentReel = idx;
+  const viewport = document.getElementById('reels-viewport');
+  const slideHeight = viewport.offsetHeight;
+  reelsTrack.style.transform = `translateY(-${idx * slideHeight}px)`;
+
+  document.querySelectorAll('.reel-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === idx);
+  });
+
+  document.getElementById('reel-prev').disabled = idx === 0;
+  document.getElementById('reel-next').disabled = idx === reelsData.length - 1;
+}
+
+document.getElementById('reel-prev').addEventListener('click', () => goToReel(currentReel - 1));
+document.getElementById('reel-next').addEventListener('click', () => goToReel(currentReel + 1));
+
+// Touch swipe for reels
+let reelTouchStartY = 0;
+let reelTouchDelta = 0;
+const reelsViewport = document.getElementById('reels-viewport');
+
+reelsViewport.addEventListener('touchstart', e => {
+  reelTouchStartY = e.touches[0].clientY;
+  reelsTrack.style.transition = 'none';
+}, { passive: true });
+
+reelsViewport.addEventListener('touchmove', e => {
+  reelTouchDelta = reelTouchStartY - e.touches[0].clientY;
+  const slideHeight = reelsViewport.offsetHeight;
+  const offset = -(currentReel * slideHeight) - reelTouchDelta * 0.4;
+  reelsTrack.style.transform = `translateY(${offset}px)`;
+}, { passive: true });
+
+reelsViewport.addEventListener('touchend', () => {
+  reelsTrack.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+  if (reelTouchDelta > 60) {
+    goToReel(currentReel + 1);
+  } else if (reelTouchDelta < -60) {
+    goToReel(currentReel - 1);
+  } else {
+    goToReel(currentReel);
+  }
+  reelTouchDelta = 0;
+});
+
+// Mouse wheel for reels
+let reelWheelTimeout = null;
+reelsViewport.addEventListener('wheel', e => {
+  if (reelWheelTimeout) return;
+  reelWheelTimeout = setTimeout(() => { reelWheelTimeout = null; }, 600);
+  if (e.deltaY > 30) goToReel(currentReel + 1);
+  else if (e.deltaY < -30) goToReel(currentReel - 1);
+}, { passive: true });
+
+buildReels();
+
 // ===== KEYBOARD SHORTCUTS =====
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;
@@ -1164,10 +1335,16 @@ document.addEventListener('keydown', e => {
   if (e.key === '1') switchTab('dump');
   if (e.key === '2') switchTab('today');
   if (e.key === '3') switchTab('timer');
-  if (e.key === '4') switchTab('wins');
+  if (e.key === '4') switchTab('reels');
+  if (e.key === '5') switchTab('wins');
   if (e.key === ' ' && document.querySelector('.tab[data-tab="timer"]').classList.contains('active')) {
     e.preventDefault();
     timerRunning ? pauseTimer() : startTimer();
+  }
+
+  if (document.querySelector('.tab[data-tab="reels"]').classList.contains('active')) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); goToReel(currentReel + 1); }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); goToReel(currentReel - 1); }
   }
 });
 
@@ -1214,6 +1391,6 @@ window.addEventListener('beforeinstallprompt', e => {
 
 // Handle URL hash for shortcuts
 const hash = window.location.hash.replace('#', '');
-if (['dump', 'today', 'timer', 'wins'].includes(hash)) {
+if (['dump', 'today', 'timer', 'reels', 'wins'].includes(hash)) {
   switchTab(hash);
 }

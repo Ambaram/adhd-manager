@@ -188,6 +188,7 @@
       <button class="tab active" data-tab="dump">Brain Dump</button>
       <button class="tab" data-tab="today">Today's Focus</button>
       <button class="tab" data-tab="timer">Focus Timer</button>
+      <button class="tab" data-tab="reels">Reels</button>
       <button class="tab" data-tab="wins">Wins</button>
     </nav>
 
@@ -291,6 +292,22 @@
           <button class="btn-secondary" id="distraction-add">Park It</button>
         </div>
         <ul class="distraction-list" id="distraction-list"></ul>
+      </div>
+    </section>
+
+    <!-- ===== REELS ===== -->
+    <section class="panel" id="panel-reels">
+      <div class="reels-viewport" id="reels-viewport">
+        <div class="reels-track" id="reels-track"></div>
+      </div>
+      <div class="reels-nav">
+        <button class="reels-nav-btn" id="reel-prev" aria-label="Previous">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+        <div class="reels-dots" id="reels-dots"></div>
+        <button class="reels-nav-btn" id="reel-next" aria-label="Next">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
       </div>
     </section>
 

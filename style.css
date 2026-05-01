@@ -1602,6 +1602,22 @@ body {
 /* ===== RESPONSIVE ===== */
 @media (max-width: 480px) {
   #app { padding: 0.75rem 1rem 3rem; }
+  .tab-bar {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    overflow: visible;
+    padding: 6px;
+  }
+  .tab {
+    flex: initial;
+    min-width: 0;
+    white-space: normal;
+    text-wrap: balance;
+    line-height: 1.15;
+    font-size: 0.78rem;
+    padding: 0.55rem 0.35rem;
+  }
   .greeting { font-size: 1.15rem; }
   .panel-header h2 { font-size: 1.3rem; }
   .timer-display { font-size: 2.5rem; }

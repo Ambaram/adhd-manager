@@ -1182,7 +1182,7 @@ function makeYouTubeEmbedUrl(id, start = 0, end = 15) {
     modestbranding: '1',
     playsinline: '1',
   });
-  return `https://www.youtube.com/embed/${id}?${q.toString()}`;
+  return `https://www.youtube-nocookie.com/embed/${id}?${q.toString()}`;
 }
 
 const adhdYouTubeClips = [
@@ -1198,6 +1198,10 @@ const adhdYouTubeClips = [
   makeYouTubeEmbedUrl('Mx6YlI19bL0'),
 ];
 
+function getYouTubeThumb(id) {
+  return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+}
+
 const reelsData = [
   {
     emoji: '🧠',
@@ -1207,6 +1211,7 @@ const reelsData = [
     action: 'Swipe for the next clip',
     theme: 1,
     youtubeEmbed: adhdYouTubeClips[0],
+    youtubeThumb: getYouTubeThumb('BEwJ9r0FAg4'),
   },
   {
     emoji: '⏱️',
@@ -1216,6 +1221,7 @@ const reelsData = [
     action: 'Try the Focus Timer →',
     theme: 4,
     youtubeEmbed: adhdYouTubeClips[1],
+    youtubeThumb: getYouTubeThumb('LZwSf6ZZRlI'),
   },
   {
     emoji: '🌊',
@@ -1225,6 +1231,7 @@ const reelsData = [
     action: 'You\'re building this skill',
     theme: 2,
     youtubeEmbed: adhdYouTubeClips[2],
+    youtubeThumb: getYouTubeThumb('nEmOpzfivv4'),
   },
   {
     emoji: '🗑️',
@@ -1234,6 +1241,7 @@ const reelsData = [
     action: 'Try Brain Dump →',
     theme: 6,
     youtubeEmbed: adhdYouTubeClips[3],
+    youtubeThumb: getYouTubeThumb('unAW3raLvJY'),
   },
   {
     emoji: '🏔️',
@@ -1243,6 +1251,7 @@ const reelsData = [
     action: 'Break tasks down →',
     theme: 5,
     youtubeEmbed: adhdYouTubeClips[4],
+    youtubeThumb: getYouTubeThumb('u77I0AZRvZA'),
   },
   {
     emoji: '💤',
@@ -1252,6 +1261,7 @@ const reelsData = [
     action: 'Be kind to yourself',
     theme: 9,
     youtubeEmbed: adhdYouTubeClips[5],
+    youtubeThumb: getYouTubeThumb('ADf_J_rPkuc'),
   },
   {
     emoji: '🎯',
@@ -1261,6 +1271,7 @@ const reelsData = [
     action: 'Channel it wisely',
     theme: 3,
     youtubeEmbed: adhdYouTubeClips[6],
+    youtubeThumb: getYouTubeThumb('I2Y2OedGMj0'),
   },
   {
     emoji: '🔄',
@@ -1270,6 +1281,7 @@ const reelsData = [
     action: 'Systems > willpower',
     theme: 7,
     youtubeEmbed: adhdYouTubeClips[7],
+    youtubeThumb: getYouTubeThumb('_SilFHwyBpU'),
   },
   {
     emoji: '🤝',
@@ -1279,6 +1291,7 @@ const reelsData = [
     action: 'You\'re doing great',
     theme: 10,
     youtubeEmbed: adhdYouTubeClips[8],
+    youtubeThumb: getYouTubeThumb('y41npkFKrdg'),
   },
   {
     emoji: '🌱',
@@ -1288,6 +1301,7 @@ const reelsData = [
     action: 'Keep growing',
     theme: 8,
     youtubeEmbed: adhdYouTubeClips[9],
+    youtubeThumb: getYouTubeThumb('Mx6YlI19bL0'),
   },
 ];
 
@@ -1443,8 +1457,9 @@ function initReelDeck(cfg) {
   function slideHtml(item, i, showHint) {
     const hasYouTube = !!item.youtubeEmbed;
     const hasVideo = !!item.videoSrc || hasYouTube;
+    const thumbStyle = item.youtubeThumb ? ` style="background-image:url('${item.youtubeThumb}');"` : '';
     const videoBlock = hasYouTube
-      ? `<div class="reel-media"><iframe class="reel-youtube" src="${item.youtubeEmbed}" title="${escHtml(item.title)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe><div class="reel-scrim" aria-hidden="true"></div></div>`
+      ? `<div class="reel-media reel-media-youtube"${thumbStyle}><iframe class="reel-youtube" src="${item.youtubeEmbed}" title="${escHtml(item.title)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe><div class="reel-scrim" aria-hidden="true"></div></div>`
       : hasVideo
       ? `<div class="reel-media"><video class="reel-video" src="${item.videoSrc}" playsinline muted loop preload="metadata"></video><div class="reel-scrim" aria-hidden="true"></div></div>`
       : '';

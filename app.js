@@ -1678,6 +1678,6 @@ window.addEventListener('beforeinstallprompt', e => {
 
 // Handle URL hash for shortcuts
 const hash = window.location.hash.replace('#', '');
-if (['dump', 'today', 'timer', 'reels', 'topics', 'wins'].includes(hash)) {
+if (['dump', 'today', 'timer', 'reels', 'topics', 'wins', 'supplements'].includes(hash)) {
   switchTab(hash);
 }

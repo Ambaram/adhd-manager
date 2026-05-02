@@ -183,16 +183,18 @@
       </div>
     </header>
 
-    <!-- Navigation tabs -->
-    <nav class="tab-bar">
-      <button class="tab active" data-tab="dump">Brain Dump</button>
-      <button class="tab" data-tab="today">Today's Focus</button>
-      <button class="tab" data-tab="timer">Focus Timer</button>
-      <button class="tab" data-tab="reels">Reels</button>
-      <button class="tab" data-tab="topics">Topics</button>
-      <button class="tab" data-tab="wins">Wins</button>
-      <button class="tab" data-tab="supplements">Supplements</button>
+    <!-- Navigation tabs (mobile: fixed bottom + compact labels via CSS) -->
+    <nav class="tab-bar" aria-label="Main sections">
+      <button type="button" class="tab active" data-tab="dump" aria-label="Brain Dump"><span class="tab-text-full" aria-hidden="true">Brain Dump</span><span class="tab-text-short" aria-hidden="true">Dump</span></button>
+      <button type="button" class="tab" data-tab="today" aria-label="Today's Focus"><span class="tab-text-full" aria-hidden="true">Today's Focus</span><span class="tab-text-short" aria-hidden="true">Focus</span></button>
+      <button type="button" class="tab" data-tab="timer" aria-label="Focus Timer"><span class="tab-text-full" aria-hidden="true">Focus Timer</span><span class="tab-text-short" aria-hidden="true">Timer</span></button>
+      <button type="button" class="tab" data-tab="reels" aria-label="Reels"><span class="tab-text-full" aria-hidden="true">Reels</span><span class="tab-text-short" aria-hidden="true">Reels</span></button>
+      <button type="button" class="tab" data-tab="topics" aria-label="Topics"><span class="tab-text-full" aria-hidden="true">Topics</span><span class="tab-text-short" aria-hidden="true">Topics</span></button>
+      <button type="button" class="tab" data-tab="wins" aria-label="Wins"><span class="tab-text-full" aria-hidden="true">Wins</span><span class="tab-text-short" aria-hidden="true">Wins</span></button>
+      <button type="button" class="tab" data-tab="supplements" aria-label="Supplements"><span class="tab-text-full" aria-hidden="true">Supplements</span><span class="tab-text-short" aria-hidden="true">Supps</span></button>
     </nav>
+
+    <main class="app-main">
 
     <!-- ===== BRAIN DUMP ===== -->
     <section class="panel active" id="panel-dump">
@@ -510,9 +512,12 @@
       <p class="supplement-sources">Summarized from public health and review literature — see <a href="https://chadd.org/about-adhd/fish-oil-supplements-and-adhd/" target="_blank" rel="noopener noreferrer">CHADD on omega-3s and ADHD</a> and the NIH review <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4170184/" target="_blank" rel="noopener noreferrer">Nutritional supplements for ADHD (PMC)</a>. Always verify with your prescriber and a pharmacist for interactions.</p>
     </section>
 
-    <!-- Confetti canvas -->
-    <canvas id="confetti-canvas"></canvas>
+    </main>
+
   </div>
+
+  <!-- Confetti canvas (outside #app so flex tab order stays correct) -->
+  <canvas id="confetti-canvas"></canvas>
 
   <script src="app.js"></script>
   <script>

@@ -576,6 +576,8 @@ body {
   max-width: 640px;
   margin: 0 auto;
   padding: 1rem 1.25rem 3rem;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ===== TOP BAR ===== */
@@ -637,34 +639,119 @@ body {
 [data-theme="light"] .moon { display: none; }
 [data-theme="dark"] .sun { display: none; }
 
+/* ===== MAIN (scrollable content; tabs stay reachable on mobile) ===== */
+.app-main {
+  flex: 1 0 auto;
+  width: 100%;
+  min-width: 0;
+}
+
 /* ===== TAB BAR ===== */
 .tab-bar {
-  display: flex;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
   background: var(--bg-card);
   border-radius: var(--radius);
-  padding: 4px;
+  padding: 6px;
   box-shadow: var(--shadow);
   margin-bottom: 1.5rem;
-  overflow-x: auto;
+  overflow: visible;
 }
 
 .tab {
-  flex: 1;
-  padding: 0.65rem 0.75rem;
+  min-width: 0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.35rem;
   border: none;
   background: transparent;
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 500;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition);
-  white-space: nowrap;
+  white-space: normal;
+  text-wrap: balance;
+  line-height: 1.15;
+  font-family: var(--font);
+}
+
+.tab-text-full { display: none; }
+.tab-text-short {
+  display: block;
+  text-align: center;
 }
 
 .tab:hover { color: var(--text); background: var(--bg-hover); }
 .tab.active { background: var(--accent); color: #fff; font-weight: 600; }
+
+@media (min-width: 901px) {
+  .tab-bar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .tab-text-full {
+    display: block;
+    text-align: center;
+  }
+
+  .tab-text-short {
+    display: none;
+  }
+
+  .tab {
+    font-size: 0.82rem;
+    padding: 0.55rem 0.45rem;
+  }
+}
+
+@media (max-width: 900px) {
+  #app {
+    padding: 0.75rem 1rem 0;
+    padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
+  }
+
+  header.top-bar {
+    order: 1;
+    flex-shrink: 0;
+  }
+
+  .app-main {
+    order: 2;
+    padding-bottom: calc(7.85rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .tab-bar {
+    order: 3;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    margin-bottom: 0;
+    padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+    border-radius: var(--radius) var(--radius) 0 0;
+    box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.12);
+  }
+
+  [data-theme="dark"] .tab-bar {
+    box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.45);
+  }
+
+  .reels-viewport,
+  .reel {
+    height: calc(100dvh - 15rem);
+    max-height: calc(100dvh - 15rem);
+    min-height: 260px;
+  }
+}
 
 /* ===== PANELS ===== */
 .panel { display: none; animation: fadeIn 0.3s ease; }
@@ -1235,6 +1322,14 @@ body {
   padding: 4px;
 }
 
+@media (max-width: 900px) {
+  .install-banner {
+    bottom: calc(6.75rem + env(safe-area-inset-bottom, 0px));
+    z-index: 110;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  }
+}
+
 /* ===== "I ALREADY CALMED DOWN" BUTTON ===== */
 .mood-self-reg {
   display: flex;
@@ -1717,23 +1812,6 @@ body {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 480px) {
-  #app { padding: 0.75rem 1rem 3rem; }
-  .tab-bar {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 6px;
-    overflow: visible;
-    padding: 6px;
-  }
-  .tab {
-    flex: initial;
-    min-width: 0;
-    white-space: normal;
-    text-wrap: balance;
-    line-height: 1.15;
-    font-size: 0.78rem;
-    padding: 0.55rem 0.35rem;
-  }
   .greeting { font-size: 1.15rem; }
   .panel-header h2 { font-size: 1.3rem; }
   .timer-display { font-size: 2.5rem; }
@@ -1748,7 +1826,6 @@ body {
   .mood-title { font-size: 1.3rem; }
   .grounding-content { padding: 1.5rem 1rem 3rem; }
   .growth-stats { flex-wrap: wrap; gap: 0.5rem; }
-  .reels-viewport, .reel { height: 65vh; }
   .reel-emoji { font-size: 3rem; }
   .reel-title { font-size: 1.25rem; }
   .reel-body { font-size: 0.88rem; }

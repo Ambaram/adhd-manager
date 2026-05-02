@@ -1600,9 +1600,190 @@ window.addEventListener('resize', () => {
   topicsDeck.onResize();
 });
 
+// ===== THINK CLEARLY (session-only; not persisted) =====
+const THINK_THEMES = [
+  { id: 'overwhelm', label: 'Too much at once' },
+  { id: 'worth', label: 'Worth or belonging' },
+  { id: 'control', label: 'Wanting a certain outcome' },
+  { id: 'time', label: 'Time / falling behind' },
+  { id: 'relation', label: 'Someone / conflict' },
+  { id: 'future', label: 'The unknown ahead' },
+];
+
+let thinkLinks = [];
+let thinkSelectedThemes = new Set();
+
+const thinkShell = document.getElementById('think-shell');
+const thinkComplete = document.getElementById('think-complete');
+const thinkInput = document.getElementById('think-input');
+const thinkChainEl = document.getElementById('think-chain');
+const thinkChainHint = document.getElementById('think-chain-hint');
+const thinkGo2 = document.getElementById('think-go-2');
+const thinkReviewChain = document.getElementById('think-review-chain');
+const thinkFacts = document.getElementById('think-facts');
+const thinkStories = document.getElementById('think-stories');
+const thinkChipsEl = document.getElementById('think-chips');
+const thinkBigPicture = document.getElementById('think-big-picture');
+const thinkFriendReveal = document.getElementById('think-reveal-friend');
+const thinkFriendBox = document.getElementById('think-friend-box');
+const thinkFriendNote = document.getElementById('think-friend-note');
+const thinkTrueNow = document.getElementById('think-true-now');
+const thinkNextStep = document.getElementById('think-next-step');
+
+function thinkSetStep(n) {
+  document.querySelectorAll('.think-step').forEach(el => {
+    const step = Number(el.dataset.thinkStep);
+    const on = step === n;
+    el.toggleAttribute('hidden', !on);
+    el.classList.toggle('think-step--active', on);
+  });
+  document.querySelectorAll('.think-dot').forEach(dot => {
+    dot.classList.toggle('think-dot--active', Number(dot.dataset.thinkDot) === n);
+  });
+}
+
+function renderThinkChain() {
+  thinkChainEl.innerHTML = '';
+  thinkLinks.forEach((text, i) => {
+    const li = document.createElement('li');
+    li.className = 'think-chain-item';
+    const span = document.createElement('span');
+    span.className = 'think-chain-text';
+    span.textContent = text;
+    const rm = document.createElement('button');
+    rm.type = 'button';
+    rm.className = 'think-chain-remove';
+    rm.setAttribute('aria-label', 'Remove this link');
+    rm.textContent = '×';
+    rm.addEventListener('click', () => {
+      thinkLinks.splice(i, 1);
+      renderThinkChain();
+      syncThinkGo2();
+    });
+    li.append(span, rm);
+    thinkChainEl.appendChild(li);
+  });
+  thinkChainHint.style.display = thinkLinks.length ? 'none' : '';
+  syncThinkGo2();
+}
+
+function syncThinkGo2() {
+  thinkGo2.disabled = thinkLinks.length === 0;
+}
+
+function renderThinkReview() {
+  thinkReviewChain.innerHTML = '';
+  thinkLinks.forEach((text, i) => {
+    const row = document.createElement('div');
+    row.className = 'think-review-row';
+    row.innerHTML = `<span class="think-review-num">${i + 1}</span>`;
+    const p = document.createElement('p');
+    p.className = 'think-review-text';
+    p.textContent = text;
+    row.appendChild(p);
+    thinkReviewChain.appendChild(row);
+  });
+}
+
+function renderThinkChips() {
+  thinkChipsEl.innerHTML = '';
+  THINK_THEMES.forEach(({ id, label }) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'think-chip';
+    b.dataset.themeId = id;
+    b.textContent = label;
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', () => {
+      if (thinkSelectedThemes.has(id)) {
+        thinkSelectedThemes.delete(id);
+        b.classList.remove('think-chip--on');
+        b.setAttribute('aria-pressed', 'false');
+      } else {
+        thinkSelectedThemes.add(id);
+        b.classList.add('think-chip--on');
+        b.setAttribute('aria-pressed', 'true');
+      }
+    });
+    thinkChipsEl.appendChild(b);
+  });
+}
+
+function resetThinkClearly() {
+  thinkLinks = [];
+  thinkSelectedThemes = new Set();
+  renderThinkChain();
+  thinkFacts.value = '';
+  thinkStories.value = '';
+  thinkBigPicture.value = '';
+  thinkFriendNote.value = '';
+  thinkTrueNow.value = '';
+  thinkNextStep.value = '';
+  thinkFriendBox.hidden = true;
+  thinkFriendReveal.setAttribute('aria-expanded', 'false');
+  renderThinkChips();
+  thinkShell.hidden = false;
+  thinkComplete.hidden = true;
+  thinkSetStep(1);
+  thinkInput.focus();
+}
+
+document.getElementById('think-add-link').addEventListener('click', () => {
+  const v = thinkInput.value.trim();
+  if (!v) return;
+  thinkLinks.push(v);
+  thinkInput.value = '';
+  renderThinkChain();
+});
+
+thinkInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    document.getElementById('think-add-link').click();
+  }
+});
+
+thinkGo2.addEventListener('click', () => {
+  renderThinkReview();
+  thinkSetStep(2);
+});
+
+document.getElementById('think-go-3').addEventListener('click', () => {
+  thinkSetStep(3);
+});
+
+document.getElementById('think-go-4').addEventListener('click', () => {
+  thinkSetStep(4);
+});
+
+document.querySelectorAll('.think-back').forEach(btn => {
+  btn.addEventListener('click', () => {
+    thinkSetStep(Number(btn.dataset.thinkBack));
+  });
+});
+
+thinkFriendReveal.addEventListener('click', () => {
+  const open = thinkFriendBox.hidden;
+  thinkFriendBox.hidden = !open;
+  thinkFriendReveal.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
+
+document.getElementById('think-finish').addEventListener('click', () => {
+  thinkShell.hidden = true;
+  thinkComplete.hidden = false;
+});
+
+document.getElementById('think-reset').addEventListener('click', () => {
+  resetThinkClearly();
+});
+
+renderThinkChips();
+thinkSetStep(1);
+
 // ===== KEYBOARD SHORTCUTS =====
 document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT') return;
+  const t = e.target.tagName;
+  if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT') return;
 
   if (e.key === '1') switchTab('dump');
   if (e.key === '2') switchTab('today');
@@ -1611,6 +1792,7 @@ document.addEventListener('keydown', e => {
   if (e.key === '5') switchTab('topics');
   if (e.key === '6') switchTab('wins');
   if (e.key === '7') switchTab('supplements');
+  if (e.key === '8') switchTab('think');
   if (e.key === ' ' && document.querySelector('.tab[data-tab="timer"]')?.classList.contains('active')) {
     e.preventDefault();
     timerRunning ? pauseTimer() : startTimer();
@@ -1678,6 +1860,6 @@ window.addEventListener('beforeinstallprompt', e => {
 
 // Handle URL hash for shortcuts
 const hash = window.location.hash.replace('#', '');
-if (['dump', 'today', 'timer', 'reels', 'topics', 'wins', 'supplements'].includes(hash)) {
+if (['dump', 'today', 'timer', 'reels', 'topics', 'wins', 'supplements', 'think'].includes(hash)) {
   switchTab(hash);
 }

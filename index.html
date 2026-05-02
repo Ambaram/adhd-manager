@@ -192,6 +192,7 @@
       <button type="button" class="tab" data-tab="topics" aria-label="Topics"><span class="tab-text-full" aria-hidden="true">Topics</span><span class="tab-text-short" aria-hidden="true">Topics</span></button>
       <button type="button" class="tab" data-tab="wins" aria-label="Wins"><span class="tab-text-full" aria-hidden="true">Wins</span><span class="tab-text-short" aria-hidden="true">Wins</span></button>
       <button type="button" class="tab" data-tab="supplements" aria-label="Supplements"><span class="tab-text-full" aria-hidden="true">Supplements</span><span class="tab-text-short" aria-hidden="true">Supps</span></button>
+      <button type="button" class="tab" data-tab="think" aria-label="Think Clearly"><span class="tab-text-full" aria-hidden="true">Think Clearly</span><span class="tab-text-short" aria-hidden="true">Think</span></button>
     </nav>
 
     <main class="app-main">
@@ -389,6 +390,93 @@
       </div>
 
       <button class="btn-secondary" id="clear-day" style="margin-top:1rem">Start Fresh Day</button>
+    </section>
+
+    <!-- ===== THINK CLEARLY (thought chain → bigger picture) ===== -->
+    <section class="panel" id="panel-think">
+      <div class="panel-header">
+        <h2>Think Clearly</h2>
+        <p class="subtitle">When thoughts pile up in a chain, naming them and zooming out can loosen the grip. Nothing here is saved after you leave or refresh.</p>
+      </div>
+
+      <div class="think-shell" id="think-shell">
+        <div class="think-progress" id="think-progress" aria-hidden="true">
+          <span class="think-dot think-dot--active" data-think-dot="1">1</span>
+          <span class="think-line"></span>
+          <span class="think-dot" data-think-dot="2">2</span>
+          <span class="think-line"></span>
+          <span class="think-dot" data-think-dot="3">3</span>
+          <span class="think-line"></span>
+          <span class="think-dot" data-think-dot="4">4</span>
+        </div>
+
+        <div class="think-step think-step--active" data-think-step="1">
+          <h3 class="think-step-heading">Map the chain</h3>
+          <p class="think-step-lead">Add each thought as its own link — the exact words running through your head. Short phrases are fine.</p>
+          <div class="dump-input-wrap">
+            <input type="text" id="think-input" placeholder="One thought link..." autocomplete="off" maxlength="280" />
+            <button type="button" class="btn-primary" id="think-add-link">Add</button>
+          </div>
+          <ul class="think-chain" id="think-chain"></ul>
+          <p class="think-hint" id="think-chain-hint">Add at least one link, then continue.</p>
+          <div class="think-nav-row">
+            <button type="button" class="btn-primary think-advance" id="think-go-2" disabled>Next: fact vs story</button>
+          </div>
+        </div>
+
+        <div class="think-step" data-think-step="2" hidden>
+          <h3 class="think-step-heading">Untangle fact from story</h3>
+          <p class="think-step-lead">Your mind mixes truth and prediction. Sorting them — without judging yourself — creates space.</p>
+          <div class="think-review" id="think-review-chain" aria-live="polite"></div>
+          <label class="think-label" for="think-facts">What parts are <strong>facts</strong> you could prove or sign your name to?</label>
+          <textarea class="think-area" id="think-facts" rows="3" placeholder="e.g. I sent the email. They haven't replied yet."></textarea>
+          <label class="think-label" for="think-stories">What parts are <strong>stories, fears, or “what ifs”</strong> (not proven yet)?</label>
+          <textarea class="think-area" id="think-stories" rows="3" placeholder="e.g. They must hate me. I'll never recover."></textarea>
+          <div class="think-nav-row">
+            <button type="button" class="btn-secondary think-back" data-think-back="1">Back</button>
+            <button type="button" class="btn-primary think-advance" id="think-go-3">Next: bigger picture</button>
+          </div>
+        </div>
+
+        <div class="think-step" data-think-step="3" hidden>
+          <h3 class="think-step-heading">Zoom out</h3>
+          <p class="think-step-lead">Tap what this spiral is really connected to underneath. Pick any that fit — then say it in your own words.</p>
+          <div class="think-chips" id="think-chips" role="group" aria-label="Themes"></div>
+          <label class="think-label" for="think-big-picture">In one or two sentences: what's the <strong>bigger picture</strong> you're actually dealing with?</label>
+          <textarea class="think-area" id="think-big-picture" rows="3" placeholder="e.g. I'm scared of being behind, not this one email."></textarea>
+          <button type="button" class="think-reveal-btn" id="think-reveal-friend" aria-expanded="false">Need a nudge? Friend-voice prompt</button>
+          <div class="think-reveal" id="think-friend-box" hidden>
+            <p class="think-reveal-text">If someone who cares about you saw this chain, they might say: “You're spinning because you care — and because you're tired.” What feels true about that for you?</p>
+            <textarea class="think-area think-area--tight" id="think-friend-note" rows="2" placeholder="Optional note..."></textarea>
+          </div>
+          <div class="think-nav-row">
+            <button type="button" class="btn-secondary think-back" data-think-back="2">Back</button>
+            <button type="button" class="btn-primary think-advance" id="think-go-4">Next: land gently</button>
+          </div>
+        </div>
+
+        <div class="think-step" data-think-step="4" hidden>
+          <h3 class="think-step-heading">Land gently</h3>
+          <p class="think-step-lead">You don't have to solve everything right now. Anchor in something small and true.</p>
+          <label class="think-label" for="think-true-now">One thing that's <strong>true right now</strong> (even tiny)</label>
+          <textarea class="think-area" id="think-true-now" rows="2" placeholder="e.g. I'm breathing. I can pause."></textarea>
+          <label class="think-label" for="think-next-step">One <strong>small next step</strong> that's enough for now</label>
+          <textarea class="think-area" id="think-next-step" rows="2" placeholder="e.g. Drink water. Write one sentence. Step away for five minutes."></textarea>
+          <div class="think-nav-row">
+            <button type="button" class="btn-secondary think-back" data-think-back="3">Back</button>
+            <button type="button" class="btn-primary think-advance" id="think-finish">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="think-complete" id="think-complete" hidden>
+        <div class="think-complete-card">
+          <div class="think-complete-icon" aria-hidden="true">◇</div>
+          <p class="think-complete-title">You stepped back from the spiral.</p>
+          <p class="think-complete-body">Naming the chain and widening the lens is a skill — not a one-time fix. Come back anytime the thoughts start racing again.</p>
+          <button type="button" class="btn-primary" id="think-reset">Start over</button>
+        </div>
+      </div>
     </section>
 
     <!-- ===== SUPPLEMENTS (informational) ===== -->

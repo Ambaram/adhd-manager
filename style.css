@@ -1545,6 +1545,302 @@ body {
   font-weight: 500;
 }
 
+/* ===== THINK CLEARLY ===== */
+.think-shell {
+  margin-top: 0.25rem;
+}
+
+.think-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 1.25rem;
+}
+
+.think-dot {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  border: 2px solid var(--border);
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.think-dot--active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.think-line {
+  flex: 1;
+  max-width: 36px;
+  height: 2px;
+  background: var(--border);
+  margin: 0 2px;
+}
+
+.think-step-heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.think-step-lead {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.think-chain {
+  list-style: none;
+  margin: 0 0 0.75rem;
+  padding: 0 0 0 0.5rem;
+  border-left: 3px solid var(--accent-soft);
+}
+
+.think-chain-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.think-chain-item:last-child {
+  border-bottom: none;
+}
+
+.think-chain-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.think-chain-remove {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.think-chain-remove:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.think-hint {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.think-nav-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.think-nav-row .think-advance {
+  margin-left: auto;
+}
+
+.think-label {
+  display: block;
+  font-size: 0.88rem;
+  margin-bottom: 0.35rem;
+  margin-top: 0.85rem;
+  line-height: 1.4;
+}
+
+.think-label:first-of-type {
+  margin-top: 0;
+}
+
+.think-area {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 0.92rem;
+  font-family: var(--font);
+  line-height: 1.45;
+  resize: vertical;
+  min-height: 4rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.think-area:focus {
+  border-color: var(--accent);
+}
+
+.think-area--tight {
+  min-height: 3rem;
+}
+
+.think-review {
+  background: var(--bg-hover);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+}
+
+.think-review-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.think-review-row:last-child {
+  border-bottom: none;
+}
+
+.think-review-num {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.think-review-text {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.think-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.think-chip {
+  padding: 0.45rem 0.65rem;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: var(--font);
+}
+
+.think-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.think-chip--on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.think-reveal-btn {
+  display: block;
+  width: 100%;
+  margin: 0.75rem 0 0;
+  padding: 0.55rem 0.85rem;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.think-reveal-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.think-reveal {
+  margin-top: 0.65rem;
+  padding: 0.85rem;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--accent);
+}
+
+.think-reveal-text {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  margin: 0 0 0.65rem;
+  color: var(--text);
+}
+
+.think-complete {
+  animation: fadeIn 0.35s ease;
+}
+
+.think-complete-card {
+  text-align: center;
+  padding: 1.75rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.think-complete-icon {
+  font-size: 2rem;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+  line-height: 1;
+}
+
+.think-complete-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.think-complete-body {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 1.25rem;
+}
+
 /* ===== REELS ===== */
 #panel-reels,
 #panel-topics {

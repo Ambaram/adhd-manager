@@ -1610,6 +1610,7 @@ document.addEventListener('keydown', e => {
   if (e.key === '4') switchTab('reels');
   if (e.key === '5') switchTab('topics');
   if (e.key === '6') switchTab('wins');
+  if (e.key === '7') switchTab('supplements');
   if (e.key === ' ' && document.querySelector('.tab[data-tab="timer"]')?.classList.contains('active')) {
     e.preventDefault();
     timerRunning ? pauseTimer() : startTimer();
